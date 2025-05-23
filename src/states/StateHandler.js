@@ -3,7 +3,7 @@
  * @module StateHandler
  */
 
-import { Emotions, Config } from '../constants.js';
+import { Emotions, Config } from '../constants.js'
 
 /**
  * Abstract base class for state handlers
@@ -16,30 +16,30 @@ export class StateHandler {
    * @param {string} stateName - The name of the state
    * @param {OwenAnimationContext} context - The animation context
    */
-  constructor(stateName, context) {
+  constructor (stateName, context) {
     /**
      * The name of this state
      * @type {string}
      */
-    this.stateName = stateName;
+    this.stateName = stateName
 
     /**
      * The animation context
      * @type {OwenAnimationContext}
      */
-    this.context = context;
+    this.context = context
 
     /**
      * Currently playing animation clip
      * @type {AnimationClip|null}
      */
-    this.currentClip = null;
+    this.currentClip = null
 
     /**
      * Nested state information
      * @type {Object|null}
      */
-    this.nestedState = null;
+    this.nestedState = null
   }
 
   /**
@@ -50,8 +50,8 @@ export class StateHandler {
    * @returns {Promise<void>}
    * @throws {Error} Must be implemented by subclasses
    */
-  async enter(_fromState = null, _emotion = Emotions.NEUTRAL) {
-    throw new Error('enter method must be implemented by subclasses');
+  async enter (_fromState = null, _emotion = Emotions.NEUTRAL) {
+    throw new Error('enter method must be implemented by subclasses')
   }
 
   /**
@@ -62,8 +62,8 @@ export class StateHandler {
    * @returns {Promise<void>}
    * @throws {Error} Must be implemented by subclasses
    */
-  async exit(_toState = null, _emotion = Emotions.NEUTRAL) {
-    throw new Error('exit method must be implemented by subclasses');
+  async exit (_toState = null, _emotion = Emotions.NEUTRAL) {
+    throw new Error('exit method must be implemented by subclasses')
   }
 
   /**
@@ -71,7 +71,7 @@ export class StateHandler {
    * @param {number} _deltaTime - Time elapsed since last update (ms, unused in base class)
    * @returns {void}
    */
-  update(_deltaTime) {
+  update (_deltaTime) {
     // Override in subclasses if needed
   }
 
@@ -80,7 +80,7 @@ export class StateHandler {
    * @param {string} _message - The user message (unused in base class)
    * @returns {Promise<void>}
    */
-  async handleMessage(_message) {
+  async handleMessage (_message) {
     // Override in subclasses if needed
   }
 
@@ -88,8 +88,8 @@ export class StateHandler {
    * Get available transitions from this state
    * @returns {string[]} Array of state names that can be transitioned to
    */
-  getAvailableTransitions() {
-    return [];
+  getAvailableTransitions () {
+    return []
   }
 
   /**
@@ -98,17 +98,17 @@ export class StateHandler {
    * @param {AnimationClip} clip - The animation clip to wait for
    * @returns {Promise<void>} Promise that resolves when the clip finishes
    */
-  async waitForClipEnd(clip) {
+  async waitForClipEnd (clip) {
     return new Promise((resolve) => {
       const checkFinished = () => {
         if (!clip.isPlaying()) {
-          resolve();
+          resolve()
         } else {
-          requestAnimationFrame(checkFinished);
+          requestAnimationFrame(checkFinished)
         }
-      };
-      checkFinished();
-    });
+      }
+      checkFinished()
+    })
   }
 
   /**
@@ -117,10 +117,10 @@ export class StateHandler {
    * @param {number} [fadeOutDuration] - Fade out duration
    * @returns {Promise<void>}
    */
-  async stopCurrentClip(fadeOutDuration = Config.DEFAULT_FADE_OUT) {
+  async stopCurrentClip (fadeOutDuration = Config.DEFAULT_FADE_OUT) {
     if (this.currentClip) {
-      await this.currentClip.stop(fadeOutDuration);
-      this.currentClip = null;
+      await this.currentClip.stop(fadeOutDuration)
+      this.currentClip = null
     }
   }
 }

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
 export default defineConfig({
   root: 'examples',
@@ -17,7 +17,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      'owen': '/src/index.js'
+      owen: '/src/index.js'
     }
   }
-});
+})

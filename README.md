@@ -2,6 +2,10 @@
 
 A comprehensive Three.js animation system for character state management with clean architecture principles, dependency injection, and factory patterns.
 
+[![Gitea Issues](https://img.shields.io/gitea/issues/all/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl%2F)](https://gitea.kajkowalski.nl/kjanat/Owen/issues)
+[![Gitea Pull Requests](https://img.shields.io/gitea/pull-requests/all/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl%2F)](https://gitea.kajkowalski.nl/kjanat/Owen/pulls)
+[![Gitea Release](https://img.shields.io/gitea/v/release/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl&include_prereleases&sort=semver)](https://gitea.kajkowalski.nl/kjanat/Owen/tags)
+
 ## 🎯 Overview
 
 The Owen Animation System is a sophisticated character animation framework built for Three.js that manages complex state machines, emotional responses, and animation transitions. It's designed with clean architecture principles to be maintainable, extensible, and testable.
@@ -181,7 +185,6 @@ Owen/
 │   └── basic-demo.js     # Basic usage example
 ├── package.json
 ├── vite.config.js
-├── .eslintrc.json
 ├── jsdoc.config.json
 └── README.md
 ```
@@ -228,8 +231,8 @@ Documentation will be generated in the `docs/` directory.
 -   `npm run dev` - Start development server
 -   `npm run build` - Build for production
 -   `npm run preview` - Preview production build
--   `npm run lint` - Run ESLint
--   `npm run lint:fix` - Fix ESLint issues
+-   `npm run lint` - Run StandardJS linting
+-   `npm run lint:fix` - Fix StandardJS issues
 -   `npm run docs` - Generate JSDoc documentation
 
 ## 🎮 Demo Controls

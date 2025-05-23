@@ -3,8 +3,8 @@
  * @module animation
  */
 
-import * as THREE from 'three';
-import { ClipTypes, Config } from '../constants.js';
+import * as THREE from 'three'
+import { ClipTypes, Config } from '../constants.js'
 
 /**
  * Represents a single animation clip with metadata and Three.js action
@@ -17,36 +17,36 @@ export class AnimationClip {
    * @param {THREE.AnimationClip} threeAnimation - The Three.js animation clip
    * @param {Object} metadata - Parsed metadata from animation name
    */
-  constructor(name, threeAnimation, metadata) {
+  constructor (name, threeAnimation, metadata) {
     /**
      * The name of the animation clip
      * @type {string}
      */
-    this.name = name;
+    this.name = name
 
     /**
      * The Three.js animation clip
      * @type {THREE.AnimationClip}
      */
-    this.animation = threeAnimation;
+    this.animation = threeAnimation
 
     /**
      * Parsed metadata about the animation
      * @type {Object}
      */
-    this.metadata = metadata;
+    this.metadata = metadata
 
     /**
      * The Three.js animation action
      * @type {THREE.AnimationAction|null}
      */
-    this.action = null;
+    this.action = null
 
     /**
      * The animation mixer
      * @type {THREE.AnimationMixer|null}
      */
-    this.mixer = null;
+    this.mixer = null
   }
 
   /**
@@ -54,22 +54,22 @@ export class AnimationClip {
    * @param {THREE.AnimationMixer} mixer - The animation mixer
    * @returns {THREE.AnimationAction} The created action
    */
-  createAction(mixer) {
-    this.mixer = mixer;
-    this.action = mixer.clipAction(this.animation);
+  createAction (mixer) {
+    this.mixer = mixer
+    this.action = mixer.clipAction(this.animation)
 
     // Configure based on type
     if (
       this.metadata.type === ClipTypes.LOOP ||
       this.metadata.type === ClipTypes.NESTED_LOOP
     ) {
-      this.action.setLoop(THREE.LoopRepeat, Infinity);
+      this.action.setLoop(THREE.LoopRepeat, Infinity)
     } else {
-      this.action.setLoop(THREE.LoopOnce);
-      this.action.clampWhenFinished = true;
+      this.action.setLoop(THREE.LoopOnce)
+      this.action.clampWhenFinished = true
     }
 
-    return this.action;
+    return this.action
   }
 
   /**
@@ -77,11 +77,11 @@ export class AnimationClip {
    * @param {number} [fadeInDuration=0.3] - Fade in duration in seconds
    * @returns {Promise<void>} Promise that resolves when fade in completes
    */
-  play(fadeInDuration = Config.DEFAULT_FADE_IN) {
+  play (fadeInDuration = Config.DEFAULT_FADE_IN) {
     if (this.action) {
-      this.action.reset();
-      this.action.fadeIn(fadeInDuration);
-      this.action.play();
+      this.action.reset()
+      this.action.fadeIn(fadeInDuration)
+      this.action.play()
     }
   }
 
@@ -90,14 +90,14 @@ export class AnimationClip {
    * @param {number} [fadeOutDuration=0.3] - Fade out duration in seconds
    * @returns {Promise<void>} Promise that resolves when fade out completes
    */
-  stop(fadeOutDuration = Config.DEFAULT_FADE_OUT) {
+  stop (fadeOutDuration = Config.DEFAULT_FADE_OUT) {
     if (this.action) {
-      this.action.fadeOut(fadeOutDuration);
+      this.action.fadeOut(fadeOutDuration)
       setTimeout(() => {
         if (this.action) {
-          this.action.stop();
+          this.action.stop()
         }
-      }, fadeOutDuration * 1000);
+      }, fadeOutDuration * 1000)
     }
   }
 
@@ -105,8 +105,8 @@ export class AnimationClip {
    * Check if the animation is currently playing
    * @returns {boolean} True if playing, false otherwise
    */
-  isPlaying() {
-    return this.action?.isRunning() || false;
+  isPlaying () {
+    return this.action?.isRunning() || false
   }
 }
 
@@ -119,18 +119,18 @@ export class AnimationClipFactory {
    * Create an animation clip factory
    * @param {AnimationLoader} animationLoader - The animation loader instance
    */
-  constructor(animationLoader) {
+  constructor (animationLoader) {
     /**
      * The animation loader for loading animation data
      * @type {AnimationLoader}
      */
-    this.animationLoader = animationLoader;
+    this.animationLoader = animationLoader
 
     /**
      * Cache for created animation clips
      * @type {Map<string, AnimationClip>}
      */
-    this.clipCache = new Map();
+    this.clipCache = new Map()
   }
 
   /**
@@ -139,67 +139,67 @@ export class AnimationClipFactory {
    * @param {string} name - The animation name to parse
    * @returns {Object} Parsed metadata object
    */
-  parseAnimationName(name) {
-    const parts = name.split('_');
-    const state = parts[ 0 ];
-    const action = parts[ 1 ];
+  parseAnimationName (name) {
+    const parts = name.split('_')
+    const state = parts[0]
+    const action = parts[1]
 
     // Handle transitions with emotions
-    if (parts[ 2 ]?.includes('2') && parts[ 3 ] === ClipTypes.TRANSITION) {
-      const [ , toState ] = parts[ 2 ].split('2');
+    if (parts[2]?.includes('2') && parts[3] === ClipTypes.TRANSITION) {
+      const [, toState] = parts[2].split('2')
       return {
         state,
         action,
         toState,
-        emotion: parts[ 2 ] || '',
+        emotion: parts[2] || '',
         type: ClipTypes.TRANSITION,
         isTransition: true,
-        hasEmotion: true,
-      };
+        hasEmotion: true
+      }
     }
 
     // Handle regular transitions
-    if (parts[ 2 ] === ClipTypes.TRANSITION) {
+    if (parts[2] === ClipTypes.TRANSITION) {
       return {
         state,
         action,
         type: ClipTypes.TRANSITION,
-        isTransition: true,
-      };
+        isTransition: true
+      }
     }
 
     // Handle nested animations
-    if (parts[ 2 ] === ClipTypes.NESTED_IN || parts[ 2 ] === ClipTypes.NESTED_OUT) {
+    if (parts[2] === ClipTypes.NESTED_IN || parts[2] === ClipTypes.NESTED_OUT) {
       return {
         state,
         action,
-        type: parts[ 2 ],
-        nestedType: parts[ 3 ],
-        isNested: true,
-      };
+        type: parts[2],
+        nestedType: parts[3],
+        isNested: true
+      }
     }
 
     // Handle nested loops and quirks
     if (
-      parts[ 3 ] === ClipTypes.NESTED_LOOP ||
-      parts[ 3 ] === ClipTypes.NESTED_QUIRK
+      parts[3] === ClipTypes.NESTED_LOOP ||
+      parts[3] === ClipTypes.NESTED_QUIRK
     ) {
       return {
         state,
         action,
-        subAction: parts[ 2 ],
-        type: parts[ 3 ],
-        isNested: true,
-      };
+        subAction: parts[2],
+        type: parts[3],
+        isNested: true
+      }
     }
 
     // Handle standard loops and quirks
     return {
       state,
       action,
-      type: parts[ 2 ],
-      isStandard: true,
-    };
+      type: parts[2],
+      isStandard: true
+    }
   }
 
   /**
@@ -207,18 +207,18 @@ export class AnimationClipFactory {
    * @param {string} name - The animation name
    * @returns {Promise<AnimationClip>} The created animation clip
    */
-  async createClip(name) {
+  async createClip (name) {
     if (this.clipCache.has(name)) {
-      return this.clipCache.get(name);
+      return this.clipCache.get(name)
     }
 
-    const metadata = this.parseAnimationName(name);
-    const animation = await this.animationLoader.loadAnimation(name);
+    const metadata = this.parseAnimationName(name)
+    const animation = await this.animationLoader.loadAnimation(name)
 
-    const clip = new AnimationClip(name, animation, metadata);
-    this.clipCache.set(name, clip);
+    const clip = new AnimationClip(name, animation, metadata)
+    this.clipCache.set(name, clip)
 
-    return clip;
+    return clip
   }
 
   /**
@@ -226,24 +226,24 @@ export class AnimationClipFactory {
    * @param {THREE.Object3D} model - The 3D model containing animations
    * @returns {Promise<Map<string, AnimationClip>>} Map of animation name to clip
    */
-  async createClipsFromModel(model) {
-    const clips = new Map();
-    const animations = model.animations || [];
+  async createClipsFromModel (model) {
+    const clips = new Map()
+    const animations = model.animations || []
 
     for (const animation of animations) {
-      const clip = await this.createClip(animation.name, model);
-      clips.set(animation.name, clip);
+      const clip = await this.createClip(animation.name, model)
+      clips.set(animation.name, clip)
     }
 
-    return clips;
+    return clips
   }
 
   /**
    * Clear the clip cache
    * @returns {void}
    */
-  clearCache() {
-    this.clipCache.clear();
+  clearCache () {
+    this.clipCache.clear()
   }
 
   /**
@@ -251,7 +251,7 @@ export class AnimationClipFactory {
    * @param {string} name - The animation name
    * @returns {AnimationClip|undefined} The cached clip or undefined
    */
-  getCachedClip(name) {
-    return this.clipCache.get(name);
+  getCachedClip (name) {
+    return this.clipCache.get(name)
   }
 }
