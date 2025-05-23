@@ -1,0 +1,37 @@
+{
+  "name": "owen-animation-system",
+  "version": "1.0.0",
+  "description": "A comprehensive Three.js animation system for character state management with clean architecture principles",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext .js",
+    "lint:fix": "eslint src --ext .js --fix",
+    "docs": "jsdoc -c jsdoc.config.json"
+  },
+  "keywords": [
+    "three.js",
+    "animation",
+    "state-machine",
+    "character",
+    "gltf",
+    "3d"
+  ],
+  "author": "Owen Animation System",
+  "license": "AGPL-3.0-only OR LicenseRef-Commercial",
+  "dependencies": {
+    "three": "^0.176.0"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5",
+    "eslint": "^9.27.0",
+    "jsdoc": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
