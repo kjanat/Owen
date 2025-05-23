@@ -1,3 +1,30 @@
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation output
+/docs/
+
+# Animation assets (if storing locally)
+/assets/models/
+/assets/animations/
+
+# Example build outputs
+/examples/dist/
+
+# 3D Models (optional - remove if you want to commit models)
+*.gltf
+*.glb
+*.fbx
+*.obj
+*.dae
+
+# Three.js cache
+.three-cache/
+
+# Editor (optional - remove if you want to commit editor files)
+.vscode/
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,webstorm,vim,emacs,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,macos,linux,visualstudiocode,webstorm,vim,emacs,node
 
@@ -418,17 +445,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,visualstudiocode,webstorm,vim,emacs,node
-
-# Build outputs
-docs/
-
-# Temporary files
-*.tmp
-*.temp
-
-# 3D Models (optional - remove if you want to commit models)
-*.gltf
-*.glb
-*.fbx
-*.obj
-*.dae

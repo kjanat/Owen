@@ -3,11 +3,11 @@
  * @module states
  */
 
-import { WaitStateHandler } from './WaitStateHandler.js';
-import { ReactStateHandler } from './ReactStateHandler.js';
-import { TypeStateHandler } from './TypeStateHandler.js';
-import { SleepStateHandler } from './SleepStateHandler.js';
-import { States } from '../constants.js';
+import { WaitStateHandler } from './WaitStateHandler.js'
+import { ReactStateHandler } from './ReactStateHandler.js'
+import { TypeStateHandler } from './TypeStateHandler.js'
+import { SleepStateHandler } from './SleepStateHandler.js'
+import { States } from '../constants.js'
 
 /**
  * Factory for creating state handlers using dependency injection
@@ -17,19 +17,19 @@ export class StateFactory {
   /**
    * Create a state factory
    */
-  constructor() {
+  constructor () {
     /**
      * Registry of state handler classes
      * @type {Map<string, Function>}
      * @private
      */
-    this.stateHandlers = new Map();
+    this.stateHandlers = new Map()
 
     // Register default state handlers
-    this.registerStateHandler(States.WAIT, WaitStateHandler);
-    this.registerStateHandler(States.REACT, ReactStateHandler);
-    this.registerStateHandler(States.TYPE, TypeStateHandler);
-    this.registerStateHandler(States.SLEEP, SleepStateHandler);
+    this.registerStateHandler(States.WAIT, WaitStateHandler)
+    this.registerStateHandler(States.REACT, ReactStateHandler)
+    this.registerStateHandler(States.TYPE, TypeStateHandler)
+    this.registerStateHandler(States.SLEEP, SleepStateHandler)
   }
 
   /**
@@ -38,8 +38,8 @@ export class StateFactory {
    * @param {Function} handlerClass - The handler class constructor
    * @returns {void}
    */
-  registerStateHandler(stateName, handlerClass) {
-    this.stateHandlers.set(stateName, handlerClass);
+  registerStateHandler (stateName, handlerClass) {
+    this.stateHandlers.set(stateName, handlerClass)
   }
 
   /**
@@ -49,21 +49,21 @@ export class StateFactory {
    * @returns {StateHandler} The created state handler
    * @throws {Error} If state handler is not registered
    */
-  createStateHandler(stateName, context) {
-    const HandlerClass = this.stateHandlers.get(stateName);
+  createStateHandler (stateName, context) {
+    const HandlerClass = this.stateHandlers.get(stateName)
     if (!HandlerClass) {
-      throw new Error(`No handler registered for state: ${stateName}`);
+      throw new Error(`No handler registered for state: ${stateName}`)
     }
 
-    return new HandlerClass(context);
+    return new HandlerClass(context)
   }
 
   /**
    * Get all available state names
    * @returns {string[]} Array of registered state names
    */
-  getAvailableStates() {
-    return Array.from(this.stateHandlers.keys());
+  getAvailableStates () {
+    return Array.from(this.stateHandlers.keys())
   }
 
   /**
@@ -71,8 +71,8 @@ export class StateFactory {
    * @param {string} stateName - The state name to check
    * @returns {boolean} True if registered, false otherwise
    */
-  isStateRegistered(stateName) {
-    return this.stateHandlers.has(stateName);
+  isStateRegistered (stateName) {
+    return this.stateHandlers.has(stateName)
   }
 
   /**
@@ -80,7 +80,7 @@ export class StateFactory {
    * @param {string} stateName - The state name to unregister
    * @returns {boolean} True if removed, false if not found
    */
-  unregisterStateHandler(stateName) {
-    return this.stateHandlers.delete(stateName);
+  unregisterStateHandler (stateName) {
+    return this.stateHandlers.delete(stateName)
   }
 }
