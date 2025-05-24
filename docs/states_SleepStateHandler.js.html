@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Source: states/SleepStateHandler.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: states/SleepStateHandler.js</h1>
+
+      <section>
+        <article>
+          <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Sleep state handler implementation
+ * @module states
+ */
+
+import { StateHandler } from './StateHandler.js'
+import { States, Emotions } from '../constants.js'
+
+/**
+ * Handler for the Sleep state
+ * @class
+ * @extends StateHandler
+ */
+export class SleepStateHandler extends StateHandler {
+  /**
+   * Create a sleep state handler
+   * @param {OwenAnimationContext} context - The animation context
+   */
+  constructor (context) {
+    super(States.SLEEPING, context)
+
+    /**
+     * Sleep animation clip
+     * @type {AnimationClip|null}
+     */
+    this.sleepClip = null
+
+    /**
+     * Whether the character is in deep sleep
+     * @type {boolean}
+     */
+    this.isDeepSleep = false
+  }
+
+  /**
+   * Enter the sleep state
+   * @param {string|null} [fromState=null] - The previous state
+   * @param {string} [_emotion=Emotions.NEUTRAL] - The emotion to enter with (unused)
+   * @returns {Promise&lt;void>}
+   */
+  async enter (fromState = null, _emotion = Emotions.NEUTRAL) {
+    console.log(`Entering SLEEPING state from ${fromState}`)
+
+    // Play sleep transition if available
+    const sleepTransition = this.context.getClip('wait_2sleep_T')
+    if (sleepTransition) {
+      await sleepTransition.play()
+      await this.waitForClipEnd(sleepTransition)
+    }
+
+    // Start sleep loop
+    this.sleepClip = this.context.getClip('sleep_idle_L')
+    if (this.sleepClip) {
+      await this.sleepClip.play()
+      this.currentClip = this.sleepClip
+    }
+
+    this.isDeepSleep = true
+  }
+
+  /**
+   * Exit the sleep state
+   * @param {string|null} [toState=null] - The next state
+   * @param {string} [emotion=Emotions.NEUTRAL] - The emotion to exit with
+   * @returns {Promise&lt;void>}
+   */
+  async exit (toState = null, _emotion = Emotions.NEUTRAL) {
+    console.log(`Exiting SLEEPING state to ${toState}`)
+    this.isDeepSleep = false
+
+    if (this.currentClip) {
+      await this.stopCurrentClip()
+    }
+
+    // Play wake up animation
+    const wakeUpClip = this.context.getClip('sleep_wakeup_T')
+    if (wakeUpClip) {
+      await wakeUpClip.play()
+      await this.waitForClipEnd(wakeUpClip)
+    }
+
+    // Play transition to next state if available
+    const transitionName = `sleep_2${toState}_T`
+    const transition = this.context.getClip(transitionName)
+    if (transition) {
+      await transition.play()
+      await this.waitForClipEnd(transition)
+    }
+  }
+
+  /**
+   * Update the sleep state
+   * @param {number} _deltaTime - Time elapsed since last update (ms, unused)
+   * @returns {void}
+   */
+  update (_deltaTime) {
+    // Sleep state doesn't need regular updates
+    // Character remains asleep until external stimulus
+  }
+
+  /**
+   * Handle a user message in sleep state (wake up)
+   * @param {string} _message - The user message (unused, just triggers wake up)
+   * @returns {Promise&lt;void>}
+   */
+  async handleMessage (_message) {
+    // Any message should wake up the character
+    if (this.isDeepSleep) {
+      console.log('Waking up due to user message')
+      // This will trigger a state transition to REACTING
+      await this.context.transitionTo(States.REACTING)
+    }
+  }
+
+  /**
+   * Get available transitions from sleep state
+   * @returns {string[]} Array of available state transitions
+   */
+  getAvailableTransitions () {
+    return [States.WAITING, States.REACTING]
+  }
+
+  /**
+   * Check if in deep sleep
+   * @returns {boolean} True if in deep sleep, false otherwise
+   */
+  isInDeepSleep () {
+    return this.isDeepSleep
+  }
+
+  /**
+   * Force wake up from sleep
+   * @returns {Promise&lt;void>}
+   */
+  async wakeUp () {
+    if (this.isDeepSleep) {
+      await this.context.transitionTo(States.WAITING)
+    }
+  }
+}
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

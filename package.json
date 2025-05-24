@@ -54,6 +54,9 @@
     "standard": {
         "globals": [
             "requestAnimationFrame"
+        ],
+        "ignore": [
+            "scripts/"
         ]
     },
     "pre-commit": [

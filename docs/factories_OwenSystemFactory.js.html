@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Source: factories/OwenSystemFactory.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: factories/OwenSystemFactory.js</h1>
+
+      <section>
+        <article>
+          <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Main system factory for creating the complete Owen system
+ * @module factories
+ */
+
+import * as THREE from 'three'
+import { OwenAnimationContext } from '../core/OwenAnimationContext.js'
+import { AnimationClipFactory } from '../animation/AnimationClip.js'
+import { GLTFAnimationLoader } from '../loaders/AnimationLoader.js'
+import { StateFactory } from '../states/StateFactory.js'
+
+/**
+ * Main factory for creating the complete Owen animation system
+ * @class
+ */
+export class OwenSystemFactory {
+  /**
+     * Create a complete Owen animation system
+     * @param {THREE.Object3D} gltfModel - The loaded GLTF model
+     * @param {THREE.Scene} scene - The Three.js scene
+     * @param {Object} [options={}] - Configuration options
+     * @param {THREE.GLTFLoader} [options.gltfLoader] - Custom GLTF loader
+     * @returns {Promise&lt;OwenAnimationContext>} The configured Owen system
+     */
+  static async createOwenSystem (gltfModel, scene, options = {}) {
+    // Create Three.js animation mixer
+    const mixer = new THREE.AnimationMixer(gltfModel)
+
+    // Create GLTF loader if not provided
+    const gltfLoader = options.gltfLoader || new THREE.GLTFLoader()
+
+    // Create animation loader
+    const animationLoader = new GLTFAnimationLoader(gltfLoader)
+
+    // Preload animations from the model
+    await animationLoader.preloadAnimations(gltfModel)
+
+    // Create animation clip factory
+    const animationClipFactory = new AnimationClipFactory(animationLoader)
+
+    // Create state factory
+    const stateFactory = new StateFactory()
+
+    // Create the main Owen context
+    const owenContext = new OwenAnimationContext(
+      gltfModel,
+      mixer,
+      animationClipFactory,
+      stateFactory
+    )
+
+    // Initialize the system
+    await owenContext.initialize()
+
+    return owenContext
+  }
+
+  /**
+     * Create a basic Owen system with minimal configuration
+     * @param {THREE.Object3D} model - The 3D model
+     * @returns {Promise&lt;OwenAnimationContext>} The configured Owen system
+     */
+  static async createBasicOwenSystem (model) {
+    const scene = new THREE.Scene()
+    scene.add(model)
+
+    return await OwenSystemFactory.createOwenSystem(model, scene)
+  }
+
+  /**
+     * Create an Owen system with custom state handlers
+     * @param {THREE.Object3D} gltfModel - The loaded GLTF model
+     * @param {THREE.Scene} scene - The Three.js scene
+     * @param {Map&lt;string, Function>} customStates - Map of state name to handler class
+     * @returns {Promise&lt;OwenAnimationContext>} The configured Owen system
+     */
+  static async createCustomOwenSystem (gltfModel, scene, customStates) {
+    const system = await OwenSystemFactory.createOwenSystem(gltfModel, scene)
+
+    // Register custom state handlers
+    const stateFactory = system.stateFactory
+    for (const [stateName, handlerClass] of customStates) {
+      stateFactory.registerStateHandler(stateName, handlerClass)
+    }
+
+    // Reinitialize with custom states
+    system.initializeStates()
+
+    return system
+  }
+}
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

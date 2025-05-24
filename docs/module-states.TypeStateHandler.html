@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Class: TypeStateHandler</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Class: TypeStateHandler</h1>
+
+      <section>
+        <header>
+          <h2>
+            <span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"
+              ><a href="module-states.html">states</a>.</span
+            >TypeStateHandler<span class="signature">(context)</span
+            ><span class="type-signature"></span>
+          </h2>
+
+          <div class="class-description"><p>Handler for the Type state</p></div>
+        </header>
+
+        <article>
+          <div class="container-overview">
+            <h2>Constructor</h2>
+
+            <h4 class="name" id="TypeStateHandler">
+              <span class="type-signature"></span>new TypeStateHandler<span
+                class="signature"
+                >(context)</span
+              ><span class="type-signature"></span>
+            </h4>
+
+            <div class="description">
+              <p>Create a type state handler</p>
+            </div>
+
+            <h5>Parameters:</h5>
+
+            <table class="params">
+              <thead>
+                <tr>
+                  <th>Name</th>
+
+                  <th>Type</th>
+
+                  <th class="last">Description</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td class="name"><code>context</code></td>
+
+                  <td class="type">
+                    <span class="param-type">OwenAnimationContext</span>
+                  </td>
+
+                  <td class="description last"><p>The animation context</p></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <dl class="details">
+              <dt class="tag-source">Source:</dt>
+              <dd class="tag-source">
+                <ul class="dummy">
+                  <li>
+                    <a href="states_TypeStateHandler.js.html"
+                      >states/TypeStateHandler.js</a
+                    >,
+                    <a href="states_TypeStateHandler.js.html#line14">line 14</a>
+                  </li>
+                </ul>
+              </dd>
+            </dl>
+          </div>
+
+          <h3 class="subsection-title">Extends</h3>
+
+          <ul>
+            <li>StateHandler</li>
+          </ul>
+
+          <h3 class="subsection-title">Members</h3>
+
+          <h4 class="name" id="emotion">
+            <span class="type-signature"></span>emotion<span
+              class="type-signature"
+            >
+              :string</span
+            >
+          </h4>
+
+          <div class="description">
+            <p>Current emotional state</p>
+          </div>
+
+          <h5>Type:</h5>
+          <ul>
+            <li>
+              <span class="param-type">string</span>
+            </li>
+          </ul>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line26">line 26</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="isTyping">
+            <span class="type-signature"></span>isTyping<span
+              class="type-signature"
+            >
+              :boolean</span
+            >
+          </h4>
+
+          <div class="description">
+            <p>Whether currently typing</p>
+          </div>
+
+          <h5>Type:</h5>
+          <ul>
+            <li>
+              <span class="param-type">boolean</span>
+            </li>
+          </ul>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line32">line 32</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h3 class="subsection-title">Methods</h3>
+
+          <h4 class="name" id="enter">
+            <span class="type-signature">(async) </span>enter<span
+              class="signature"
+              >(_fromState<span class="signature-attributes">opt</span>,
+              emotion<span class="signature-attributes">opt</span>)</span
+            ><span class="type-signature"> &rarr; {Promise.&lt;void>}</span>
+          </h4>
+
+          <div class="description">
+            <p>Enter the type state</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th>Attributes</th>
+
+                <th>Default</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>_fromState</code></td>
+
+                <td class="type">
+                  <span class="param-type">string</span>
+                  |
+
+                  <span class="param-type">null</span>
+                </td>
+
+                <td class="attributes">&lt;optional><br /></td>
+
+                <td class="default">null</td>
+
+                <td class="description last">
+                  <p>The previous state (unused)</p>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="name"><code>emotion</code></td>
+
+                <td class="type">
+                  <span class="param-type">string</span>
+                </td>
+
+                <td class="attributes">&lt;optional><br /></td>
+
+                <td class="default">Emotions.NEUTRAL</td>
+
+                <td class="description last">
+                  <p>The emotion to enter with</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line41">line 41</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">Promise.&lt;void></span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="exit">
+            <span class="type-signature">(async) </span>exit<span
+              class="signature"
+              >(toState<span class="signature-attributes">opt</span>,
+              _emotion<span class="signature-attributes">opt</span>)</span
+            ><span class="type-signature"> &rarr; {Promise.&lt;void>}</span>
+          </h4>
+
+          <div class="description">
+            <p>Exit the type state</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th>Attributes</th>
+
+                <th>Default</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>toState</code></td>
+
+                <td class="type">
+                  <span class="param-type">string</span>
+                  |
+
+                  <span class="param-type">null</span>
+                </td>
+
+                <td class="attributes">&lt;optional><br /></td>
+
+                <td class="default">null</td>
+
+                <td class="description last"><p>The next state</p></td>
+              </tr>
+
+              <tr>
+                <td class="name"><code>_emotion</code></td>
+
+                <td class="type">
+                  <span class="param-type">string</span>
+                </td>
+
+                <td class="attributes">&lt;optional><br /></td>
+
+                <td class="default">Emotions.NEUTRAL</td>
+
+                <td class="description last">
+                  <p>The emotion to exit with (unused)</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line65">line 65</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">Promise.&lt;void></span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="finishTyping">
+            <span class="type-signature">(async) </span>finishTyping<span
+              class="signature"
+              >()</span
+            ><span class="type-signature"> &rarr; {Promise.&lt;void>}</span>
+          </h4>
+
+          <div class="description">
+            <p>Finish typing and prepare to transition</p>
+          </div>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line90">line 90</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">Promise.&lt;void></span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="getAvailableTransitions">
+            <span class="type-signature"></span>getAvailableTransitions<span
+              class="signature"
+              >()</span
+            ><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
+          </h4>
+
+          <div class="description">
+            <p>Get available transitions from type state</p>
+          </div>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line108">line 108</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <div class="param-desc">
+            <p>Array of available state transitions</p>
+          </div>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">Array.&lt;string></span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="getIsTyping">
+            <span class="type-signature"></span>getIsTyping<span
+              class="signature"
+              >()</span
+            ><span class="type-signature"> &rarr; {boolean}</span>
+          </h4>
+
+          <div class="description">
+            <p>Check if currently typing</p>
+          </div>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line116">line 116</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <div class="param-desc">
+            <p>True if typing, false otherwise</p>
+          </div>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">boolean</span>
+            </dd>
+          </dl>
+
+          <h4 class="name" id="setTyping">
+            <span class="type-signature"></span>setTyping<span class="signature"
+              >(typing)</span
+            ><span class="type-signature"> &rarr; {void}</span>
+          </h4>
+
+          <div class="description">
+            <p>Set typing state</p>
+          </div>
+
+          <h5>Parameters:</h5>
+
+          <table class="params">
+            <thead>
+              <tr>
+                <th>Name</th>
+
+                <th>Type</th>
+
+                <th class="last">Description</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="name"><code>typing</code></td>
+
+                <td class="type">
+                  <span class="param-type">boolean</span>
+                </td>
+
+                <td class="description last">
+                  <p>Whether currently typing</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <dl class="details">
+            <dt class="tag-source">Source:</dt>
+            <dd class="tag-source">
+              <ul class="dummy">
+                <li>
+                  <a href="states_TypeStateHandler.js.html"
+                    >states/TypeStateHandler.js</a
+                  >,
+                  <a href="states_TypeStateHandler.js.html#line125">line 125</a>
+                </li>
+              </ul>
+            </dd>
+          </dl>
+
+          <h5>Returns:</h5>
+
+          <dl>
+            <dt>Type</dt>
+            <dd>
+              <span class="param-type">void</span>
+            </dd>
+          </dl>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

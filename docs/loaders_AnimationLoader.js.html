@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Source: loaders/AnimationLoader.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: loaders/AnimationLoader.js</h1>
+
+      <section>
+        <article>
+          <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Animation loader interfaces and implementations
+ * @module loaders
+ */
+
+/**
+ * Abstract base class for animation loaders
+ * @abstract
+ * @class
+ */
+export class AnimationLoader {
+  /**
+     * Load an animation by name
+     * @abstract
+     * @param {string} _name - The animation name to load (unused in base class)
+     * @returns {Promise&lt;THREE.AnimationClip>} The loaded animation clip
+     * @throws {Error} Must be implemented by subclasses
+     */
+  async loadAnimation (_name) {
+    throw new Error('loadAnimation method must be implemented by subclasses')
+  }
+}
+
+/**
+ * GLTF animation loader implementation
+ * @class
+ * @extends AnimationLoader
+ */
+export class GLTFAnimationLoader extends AnimationLoader {
+  /**
+     * Create a GLTF animation loader
+     * @param {THREE.GLTFLoader} gltfLoader - The Three.js GLTF loader instance
+     */
+  constructor (gltfLoader) {
+    super()
+
+    /**
+         * The Three.js GLTF loader
+         * @type {THREE.GLTFLoader}
+         */
+    this.gltfLoader = gltfLoader
+
+    /**
+         * Cache for loaded animations
+         * @type {Map&lt;string, THREE.AnimationClip>}
+         */
+    this.animationCache = new Map()
+  }
+
+  /**
+     * Load an animation from GLTF by name
+     * @param {string} name - The animation name to load
+     * @returns {Promise&lt;THREE.AnimationClip>} The loaded animation clip
+     * @throws {Error} If animation is not found
+     */
+  async loadAnimation (name) {
+    if (this.animationCache.has(name)) {
+      return this.animationCache.get(name)
+    }
+
+    // In a real implementation, this would load from GLTF files
+    // For now, we'll assume animations are already loaded in the model
+    throw new Error(`Animation '${name}' not found. Implement GLTF loading logic.`)
+  }
+
+  /**
+     * Preload animations from a GLTF model
+     * @param {Object} gltfModel - The loaded GLTF model
+     * @returns {Promise&lt;void>}
+     */
+  async preloadAnimations (gltfModel) {
+    if (gltfModel.animations) {
+      for (const animation of gltfModel.animations) {
+        this.animationCache.set(animation.name, animation)
+      }
+    }
+  }
+
+  /**
+     * Clear the animation cache
+     * @returns {void}
+     */
+  clearCache () {
+    this.animationCache.clear()
+  }
+
+  /**
+     * Get all cached animation names
+     * @returns {string[]} Array of cached animation names
+     */
+  getCachedAnimationNames () {
+    return Array.from(this.animationCache.keys())
+  }
+}
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Source: constants.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: constants.js</h1>
+
+      <section>
+        <article>
+          <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Animation system constants and enumerations
+ * @module constants
+ */
+
+/**
+ * Animation clip types based on naming convention
+ * @readonly
+ * @enum {string}
+ */
+export const ClipTypes = {
+  /** Loop animation */
+  LOOP: 'L',
+  /** Quirk animation */
+  QUIRK: 'Q',
+  /** Nested loop animation */
+  NESTED_LOOP: 'NL',
+  /** Nested quirk animation */
+  NESTED_QUIRK: 'NQ',
+  /** Nested in transition */
+  NESTED_IN: 'IN_NT',
+  /** Nested out transition */
+  NESTED_OUT: 'OUT_NT',
+  /** Transition animation */
+  TRANSITION: 'T'
+}
+
+/**
+ * Character animation states
+ * @readonly
+ * @enum {string}
+ */
+export const States = {
+  /** Waiting/idle state */
+  WAITING: 'wait',
+  /** Reacting to input state */
+  REACTING: 'react',
+  /** Typing response state */
+  TYPING: 'type',
+  /** Sleep/inactive state */
+  SLEEPING: 'sleep'
+}
+
+/**
+ * Character emotional states
+ * @readonly
+ * @enum {string}
+ */
+export const Emotions = {
+  /** Neutral emotion */
+  NEUTRAL: '',
+  /** Angry emotion */
+  ANGRY: 'an',
+  /** Shocked emotion */
+  SHOCKED: 'sh',
+  /** Happy emotion */
+  HAPPY: 'ha',
+  /** Sad emotion */
+  SAD: 'sa'
+}
+
+/**
+ * Default configuration values
+ * @readonly
+ * @type {Object}
+ */
+export const Config = {
+  /** Default fade in duration for animations (ms) */
+  DEFAULT_FADE_IN: 0.3,
+  /** Default fade out duration for animations (ms) */
+  DEFAULT_FADE_OUT: 0.3,
+  /** Default quirk interval (ms) */
+  QUIRK_INTERVAL: 5000,
+  /** Default inactivity timeout (ms) */
+  INACTIVITY_TIMEOUT: 60000,
+  /** Quirk probability threshold */
+  QUIRK_PROBABILITY: 0.3
+}
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

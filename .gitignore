@@ -2,8 +2,8 @@
 *.tmp
 *.temp
 
-# Documentation output
-/docs/
+# # Documentation output
+# /docs/
 
 # Animation assets (if storing locally)
 /assets/models/

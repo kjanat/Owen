@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Source: states/StateFactory.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: states/StateFactory.js</h1>
+
+      <section>
+        <article>
+          <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview State factory for creating state handlers
+ * @module states
+ */
+
+import { WaitStateHandler } from './WaitStateHandler.js'
+import { ReactStateHandler } from './ReactStateHandler.js'
+import { TypeStateHandler } from './TypeStateHandler.js'
+import { SleepStateHandler } from './SleepStateHandler.js'
+import { States } from '../constants.js'
+
+/**
+ * Factory for creating state handlers using dependency injection
+ * @class
+ */
+export class StateFactory {
+  /**
+   * Create a state factory
+   */
+  constructor () {
+    /**
+     * Registry of state handler classes
+     * @type {Map&lt;string, Function>}
+     * @private
+     */
+    this.stateHandlers = new Map()
+
+    // Register default state handlers
+    this.registerStateHandler(States.WAITING, WaitStateHandler)
+    this.registerStateHandler(States.REACTING, ReactStateHandler)
+    this.registerStateHandler(States.TYPING, TypeStateHandler)
+    this.registerStateHandler(States.SLEEPING, SleepStateHandler)
+  }
+
+  /**
+   * Register a state handler class
+   * @param {string} stateName - The name of the state
+   * @param {Function} handlerClass - The handler class constructor
+   * @returns {void}
+   */
+  registerStateHandler (stateName, handlerClass) {
+    this.stateHandlers.set(stateName, handlerClass)
+  }
+
+  /**
+   * Create a state handler instance
+   * @param {string} stateName - The name of the state
+   * @param {OwenAnimationContext} context - The animation context
+   * @returns {StateHandler} The created state handler
+   * @throws {Error} If state handler is not registered
+   */
+  createStateHandler (stateName, context) {
+    const HandlerClass = this.stateHandlers.get(stateName)
+    if (!HandlerClass) {
+      throw new Error(`No handler registered for state: ${stateName}`)
+    }
+
+    return new HandlerClass(context)
+  }
+
+  /**
+   * Get all available state names
+   * @returns {string[]} Array of registered state names
+   */
+  getAvailableStates () {
+    return Array.from(this.stateHandlers.keys())
+  }
+
+  /**
+   * Check if a state is registered
+   * @param {string} stateName - The state name to check
+   * @returns {boolean} True if registered, false otherwise
+   */
+  isStateRegistered (stateName) {
+    return this.stateHandlers.has(stateName)
+  }
+
+  /**
+   * Unregister a state handler
+   * @param {string} stateName - The state name to unregister
+   * @returns {boolean} True if removed, false if not found
+   */
+  unregisterStateHandler (stateName) {
+    return this.stateHandlers.delete(stateName)
+  }
+}
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

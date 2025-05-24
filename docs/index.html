@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css" />
+  </head>
+
+  <body>
+    <div id="main">
+      <h1 class="page-title">Home</h1>
+
+      <h3></h3>
+
+      <section>
+        <article>
+          <h1>Owen Animation System</h1>
+          <p>
+            A comprehensive Three.js animation system for character state
+            management with clean architecture principles, dependency injection,
+            and factory patterns.
+          </p>
+          <p>
+            <a href="https://gitea.kajkowalski.nl/kjanat/Owen/issues"
+              ><img
+                src="https://img.shields.io/gitea/issues/all/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl%2F"
+                alt="Gitea Issues"
+            /></a>
+            <a href="https://gitea.kajkowalski.nl/kjanat/Owen/pulls"
+              ><img
+                src="https://img.shields.io/gitea/pull-requests/all/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl%2F"
+                alt="Gitea Pull Requests"
+            /></a>
+            <a href="https://gitea.kajkowalski.nl/kjanat/Owen/tags"
+              ><img
+                src="https://img.shields.io/gitea/v/release/kjanat/Owen?gitea_url=https%3A%2F%2Fgitea.kajkowalski.nl&amp;include_prereleases&amp;sort=semver"
+                alt="Gitea Release"
+            /></a>
+          </p>
+          <h2>🎯 Overview</h2>
+          <p>
+            The Owen Animation System is a sophisticated character animation
+            framework built for Three.js that manages complex state machines,
+            emotional responses, and animation transitions. It's designed with
+            clean architecture principles to be maintainable, extensible, and
+            testable.
+          </p>
+          <h2>✨ Key Features</h2>
+          <ul>
+            <li>
+              <strong>🤖 State Machine Implementation</strong> - Complete state
+              management system with <code>Wait</code>, <code>React</code>,
+              <code>Type</code>, and <code>Sleep</code> states
+            </li>
+            <li>
+              <strong>😊 Emotional Response System</strong> - Analyzes user
+              input to determine appropriate emotional animations
+            </li>
+            <li>
+              <strong>🔄 Animation Transition Management</strong> - Smooth
+              transitions between states with fade in/out support
+            </li>
+            <li>
+              <strong>📝 Multi-Scheme Animation Naming</strong> - Supports
+              legacy, artist-friendly, hierarchical, and semantic naming schemes
+            </li>
+            <li>
+              <strong>🎨 Artist-Friendly Workflow</strong> - Blender-compatible
+              naming for 3D artists (<code>Owen_WaitIdle</code>,
+              <code>Owen_ReactHappy</code>)
+            </li>
+            <li>
+              <strong>👨‍💻 Developer Experience</strong> - Type-safe constants and
+              semantic naming (<code>OwenWaitIdleLoop</code>,
+              <code>OwenReactAngryTransition</code>)
+            </li>
+            <li>
+              <strong>🏗️ Clean Architecture</strong> - Uses dependency
+              injection, factory patterns, and separation of concerns
+            </li>
+            <li>
+              <strong>⚡ Performance Optimized</strong> - Efficient animation
+              caching and resource management
+            </li>
+            <li>
+              <strong>🧩 Extensible Design</strong> - Easy to add new states,
+              emotions, and animation types
+            </li>
+            <li>
+              <strong>🔄 Backward Compatibility</strong> - Legacy naming scheme
+              continues to work alongside new schemes
+            </li>
+          </ul>
+          <h2>🚀 Installation</h2>
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>Node.js 16.0.0 or higher</li>
+            <li>
+              Three.js compatible 3D model with animations (GLTF/GLB format
+              recommended)
+            </li>
+          </ul>
+          <h3>Install Dependencies</h3>
+          <pre class="prettyprint source lang-bash"><code># Clone the repository
+git clone https://gitea.kajkowalski.nl/kjanat/Owen.git
+cd Owen
+
+# Install dependencies
+npm install
+
+# Install dev dependencies
+npm install --include dev
+</code></pre>
+          <h2>📖 Usage</h2>
+          <h3>Basic Usage</h3>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>import * as THREE from &quot;three&quot;;
+import { GLTFLoader } from &quot;three/examples/jsm/loaders/GLTFLoader.js&quot;;
+import { OwenSystemFactory } from &quot;owen&quot;;
+
+// Load your 3D model
+const loader = new GLTFLoader();
+const gltf = await loader.loadAsync(&quot;path/to/your-model.gltf&quot;);
+
+// Create a Three.js scene
+const scene = new THREE.Scene();
+scene.add(gltf.scene);
+
+// Create the Owen animation system
+const owenSystem = await OwenSystemFactory.createOwenSystem(gltf, scene);
+
+// Handle user messages
+await owenSystem.handleUserMessage(&quot;Hello Owen!&quot;);
+
+// Update in your render loop
+function animate() {
+  const deltaTime = clock.getDelta() * 1000; // Convert to milliseconds
+  owenSystem.update(deltaTime);
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+</code></pre>
+          <blockquote>
+            <p>
+              [!NOTE] Replace <code>path/to/your-model.gltf</code> with the
+              actual path to your 3D character model. The system is designed to
+              work with any GLTF model that follows the animation naming
+              convention.
+            </p>
+          </blockquote>
+          <h3>Advanced Usage</h3>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>import { OwenSystemFactory, States, Emotions, StateHandler } from &quot;owen&quot;;
+
+// Create custom state handler
+class CustomStateHandler extends StateHandler {
+  async enter(fromState, emotion) {
+    console.log(`Entering custom state from ${fromState}`);
+    // Your custom logic here
+  }
+
+  async exit(toState, emotion) {
+    console.log(`Exiting custom state to ${toState}`);
+    // Your custom logic here
+  }
+}
+
+// Register custom states
+const customStates = new Map();
+customStates.set(&quot;custom&quot;, CustomStateHandler);
+
+// Create system with custom states
+const owenSystem = await OwenSystemFactory.createCustomOwenSystem(gltfModel, scene, customStates);
+
+// Manual state transitions
+await owenSystem.transitionTo(States.REACTING, Emotions.HAPPY);
+</code></pre>
+          <h2>🎨 Multi-Scheme Animation Naming</h2>
+          <p>
+            Owen supports
+            <strong>four different animation naming schemes</strong> to
+            accommodate different workflows and preferences:
+          </p>
+          <h3>Naming Schemes</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Scheme</th>
+                <th>Format</th>
+                <th>Example</th>
+                <th>Use Case</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Legacy</strong></td>
+                <td><code>{state}_{emotion}_{type}</code></td>
+                <td><code>wait_idle_L</code></td>
+                <td>Backward compatibility</td>
+              </tr>
+              <tr>
+                <td><strong>Artist</strong></td>
+                <td><code>Owen_{Action}</code></td>
+                <td><code>Owen_WaitIdle</code></td>
+                <td>Blender-friendly for 3D artists</td>
+              </tr>
+              <tr>
+                <td><strong>Hierarchical</strong></td>
+                <td><code>owen.{category}.{state}...</code></td>
+                <td><code>owen.state.wait.idle.loop</code></td>
+                <td>Structured projects</td>
+              </tr>
+              <tr>
+                <td><strong>Semantic</strong></td>
+                <td><code>Owen{StateAction}{Type}</code></td>
+                <td><code>OwenWaitIdleLoop</code></td>
+                <td>Developer-friendly</td>
+              </tr>
+            </tbody>
+          </table>
+          <h3>Usage Examples</h3>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>// All of these refer to the same animation:
+const clip1 = owenSystem.getClip('wait_idle_L');                    // Legacy
+const clip2 = owenSystem.getClip('Owen_WaitIdle');                  // Artist  
+const clip3 = owenSystem.getClip('owen.state.wait.idle.loop');      // Hierarchical
+const clip4 = owenSystem.getClip('OwenWaitIdleLoop');               // Semantic
+
+// Convert between schemes
+import { convertAnimationName, SemanticAnimations } from 'owen';
+
+const artistName = convertAnimationName('wait_idle_L', 'artist');
+// Returns: 'Owen_WaitIdle'
+
+// Use type-safe constants
+const animation = SemanticAnimations.WAIT_IDLE_LOOP; // 'OwenWaitIdleLoop'
+</code></pre>
+          <h3>For 3D Artists (Blender Workflow)</h3>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>// Use artist-friendly names in Blender:
+// Owen_WaitIdle, Owen_ReactHappy, Owen_TypeFast, etc.
+// System automatically handles conversion!
+
+const clip = owenSystem.getClip('Owen_ReactAngry');  // Just works!
+</code></pre>
+          <blockquote>
+            <p>
+              [!TIP] See the
+              <a href="./MULTI_SCHEME_GUIDE.md">Multi-Scheme Guide</a> for
+              complete documentation and examples.
+            </p>
+          </blockquote>
+          <h2>🎮 Animation Naming Convention (Legacy)</h2>
+          <p>
+            The system maintains backward compatibility with the original naming
+            convention:
+          </p>
+          <p>The system expects animations to follow this naming convention:</p>
+          <pre class="prettyprint source lang-txt"><code>[state]_[action]_[type]
+[state]_[action]2[toState]_[emotion]_T
+</code></pre>
+          <h3>Examples</h3>
+          <ul>
+            <li><code>wait_idle_L</code> - Wait state idle loop</li>
+            <li><code>wait_quirk1_Q</code> - Wait state quirk animation</li>
+            <li>
+              <code>react_angry2type_an_T</code> - Transition from react to type
+              with angry emotion
+            </li>
+            <li>
+              <code>type_happy_L</code> - Type state with happy emotion loop
+            </li>
+            <li><code>sleep_wakeup_T</code> - Sleep wake up transition</li>
+          </ul>
+          <h3>Animation Types</h3>
+          <ul>
+            <li><code>L</code> - Loop animation</li>
+            <li><code>Q</code> - Quirk animation</li>
+            <li><code>T</code> - Transition animation</li>
+            <li><code>NL</code> - Nested loop</li>
+            <li><code>NQ</code> - Nested quirk</li>
+          </ul>
+          <h3>Emotions</h3>
+          <ul>
+            <li><code>an</code> - Angry</li>
+            <li><code>sh</code> - Shocked</li>
+            <li><code>ha</code> - Happy</li>
+            <li><code>sa</code> - Sad</li>
+          </ul>
+          <h2>🏗️ Architecture</h2>
+          <h3><strong>Dependency Injection</strong></h3>
+          <ul>
+            <li>
+              <code>OwenAnimationContext</code> receives dependencies through
+              constructor injection
+            </li>
+            <li>State handlers are injected with required context</li>
+            <li>Animation loaders are injected into factories</li>
+          </ul>
+          <h3><strong>Factory Patterns</strong></h3>
+          <ul>
+            <li>
+              <code>AnimationClipFactory</code> - Creates animation clips with
+              metadata parsing
+            </li>
+            <li>
+              <code>StateFactory</code> - Creates state handlers dynamically
+            </li>
+            <li>
+              <code>OwenSystemFactory</code> - Main factory that assembles the
+              complete system
+            </li>
+          </ul>
+          <h3><strong>State Machine</strong></h3>
+          <ul>
+            <li>Each state has its own handler class with entry/exit logic</li>
+            <li>States manage their own transitions and behaviors</li>
+            <li>
+              Emotional transitions are handled with proper animation sequencing
+            </li>
+          </ul>
+          <h2>📁 Project Structure</h2>
+          <pre class="prettyprint source lang-sh"><code>Owen/
+├── src/
+│   ├── constants.js              # Animation types, states, emotions
+│   ├── index.js                  # Main entry point
+│   ├── animation/
+│   │   └── AnimationClip.js      # Core animation classes
+│   ├── core/
+│   │   └── OwenAnimationContext.js # Main system controller
+│   ├── factories/
+│   │   └── OwenSystemFactory.js  # System factory
+│   ├── loaders/
+│   │   └── AnimationLoader.js    # Animation loading interfaces
+│   └── states/
+│       ├── StateHandler.js       # Base state handler
+│       ├── StateFactory.js       # State factory
+│       ├── WaitStateHandler.js   # Wait state implementation
+│       ├── ReactStateHandler.js  # React state implementation
+│       ├── TypeStateHandler.js   # Type state implementation
+│       └── SleepStateHandler.js  # Sleep state implementation
+├── examples/
+│   ├── index.html        # Demo HTML page
+│   └── basic-demo.js     # Basic usage example
+├── package.json
+├── vite.config.js
+├── jsdoc.config.json
+└── README.md
+</code></pre>
+          <h2>🛠️ Development</h2>
+          <h3>Running the Development Server</h3>
+          <pre
+            class="prettyprint source lang-bash"
+          ><code># Start the development server
+npm run dev
+</code></pre>
+          <p>
+            This will start a Vite development server and open the basic demo at
+            <code>http://localhost:3000</code>.
+          </p>
+          <h3>Building for Production</h3>
+          <pre class="prettyprint source lang-bash"><code># Build the project
+npm run build
+</code></pre>
+          <h3>Linting</h3>
+          <pre class="prettyprint source lang-bash"><code># Run ESLint
+npm run lint
+
+# Fix linting issues automatically
+npm run lint:fix
+</code></pre>
+          <h3>Generating Documentation</h3>
+          <pre
+            class="prettyprint source lang-bash"
+          ><code># Generate JSDoc documentation
+npm run docs
+</code></pre>
+          <p>
+            Documentation will be generated in the <code>docs/</code> directory.
+          </p>
+          <h3>Project Scripts</h3>
+          <ul>
+            <li><code>npm run dev</code> - Start development server</li>
+            <li><code>npm run build</code> - Build for production</li>
+            <li><code>npm run preview</code> - Preview production build</li>
+            <li><code>npm run lint</code> - Run StandardJS linting</li>
+            <li><code>npm run lint:fix</code> - Fix StandardJS issues</li>
+            <li><code>npm run docs</code> - Generate JSDoc documentation</li>
+            <li><code>npm run format</code> - Format code with Prettier</li>
+          </ul>
+          <h2>🎮 Demo Controls</h2>
+          <p>The basic demo includes these keyboard controls:</p>
+          <ul>
+            <li><strong>1</strong> - Transition to Wait state</li>
+            <li><strong>2</strong> - Transition to React state</li>
+            <li><strong>3</strong> - Transition to Type state</li>
+            <li><strong>4</strong> - Transition to Sleep state</li>
+            <li><strong>Space</strong> - Send random test message</li>
+            <li><strong>Click</strong> - Register user activity</li>
+          </ul>
+          <h2>🔧 Configuration</h2>
+          <h3>Customizing Emotions</h3>
+          <p>
+            You can extend the emotion system by modifying the message analysis:
+          </p>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>import { ReactStateHandler } from &quot;owen&quot;;
+
+class CustomReactHandler extends ReactStateHandler {
+  analyzeMessageEmotion(message) {
+    // Your custom emotion analysis logic
+    if (message.includes(&quot;excited&quot;)) {
+      return Emotions.HAPPY;
+    }
+    return super.analyzeMessageEmotion(message);
+  }
+}
+</code></pre>
+          <h3>Adjusting Timing</h3>
+          <p>Configure timing values in your application:</p>
+          <pre
+            class="prettyprint source lang-javascript"
+          ><code>import { Config } from &quot;owen&quot;;
+
+// Modify default values
+Config.QUIRK_INTERVAL = 8000; // 8 seconds between quirks
+Config.INACTIVITY_TIMEOUT = 120000; // 2 minutes until sleep
+</code></pre>
+          <h2>🐛 Troubleshooting</h2>
+          <h3>Common Issues</h3>
+          <ol>
+            <li><strong>&quot;Animation not found&quot; errors</strong></li>
+          </ol>
+          <ul>
+            <li>
+              Ensure your 3D model contains animations with the correct naming
+              convention
+            </li>
+            <li>
+              Check that animations are properly exported in your GLTF file
+            </li>
+          </ul>
+          <ol start="2">
+            <li><strong>State transitions not working</strong></li>
+          </ol>
+          <ul>
+            <li>Verify that transition animations exist in your model</li>
+            <li>Check console for error messages about missing clips</li>
+          </ul>
+          <ol start="3">
+            <li><strong>Performance issues</strong></li>
+          </ol>
+          <ul>
+            <li>
+              Ensure you're calling <code>owenSystem.update()</code> in your
+              render loop
+            </li>
+            <li>Check that unused animations are properly disposed</li>
+          </ul>
+          <h3>Debug Mode</h3>
+          <p>
+            Enable debug logging by opening browser console. The system logs
+            state transitions and important events.
+          </p>
+          <h2>🤝 Contributing</h2>
+          <ol>
+            <li>Fork the repository</li>
+            <li>
+              Create a feature branch:
+              <code>git checkout -b feature/new-feature</code>
+            </li>
+            <li>
+              Commit your changes: <code>git commit -am 'Add new feature'</code>
+            </li>
+            <li>
+              Push to the branch:
+              <code>git push origin feature/new-feature</code>
+            </li>
+            <li>Submit a pull request</li>
+          </ol>
+          <h3>Code Style</h3>
+          <ul>
+            <li>Follow the existing ESLint configuration</li>
+            <li>Add JSDoc comments for all public methods</li>
+            <li>Write unit tests for new features</li>
+            <li>Maintain the existing architecture patterns</li>
+          </ul>
+          <h2>📄 License</h2>
+          <p>This project is dual-licensed under your choice of:</p>
+          <ul>
+            <li>
+              <strong>Open Source/Non-Commercial Use</strong>: AGPL-3.0 - see
+              the <a href="LICENSE.AGPL">LICENSE.AGPL</a> file for details.
+            </li>
+            <li>
+              <strong>Commercial/Enterprise Use</strong>: Commercial License -
+              see the <a href="LICENSE.COMMERCIAL">LICENSE.COMMERCIAL</a> file
+              for details. Requires a paid commercial license. Please contact us
+              at [email] for pricing and terms.
+            </li>
+          </ul>
+          <h3>Quick Guide</h3>
+          <ul>
+            <li>✅ Personal/educational use → Use under AGPL-3.0</li>
+            <li>✅ Open source projects → Use under AGPL-3.0</li>
+            <li>✅ Commercial/proprietary use → Purchase commercial license</li>
+            <li>
+              ❌ SaaS without source disclosure → Purchase commercial license
+            </li>
+          </ul>
+          <h2>🙏 Acknowledgments</h2>
+          <ul>
+            <li>
+              Built with
+              <a
+                href="https://threejs.org/"
+                title="Three.js - JavaScript 3D Library"
+                >Three.js</a
+              >
+            </li>
+            <li>Inspired by modern character animation systems</li>
+            <li>Uses clean architecture principles from Robert C. Martin</li>
+          </ul>
+          <!-- LINK DEFINITIONS -->
+        </article>
+      </section>
+    </div>
+
+    <nav>
+      <h2><a href="index.html">Home</a></h2>
+      <h3>Modules</h3>
+      <ul>
+        <li><a href="module-StateHandler.html">StateHandler</a></li>
+        <li><a href="module-animation.html">animation</a></li>
+        <li>
+          <a href="module-animation_AnimationConstants.html"
+            >animation/AnimationConstants</a
+          >
+        </li>
+        <li>
+          <a href="module-animation_AnimationNameMapper.html"
+            >animation/AnimationNameMapper</a
+          >
+        </li>
+        <li><a href="module-constants.html">constants</a></li>
+        <li><a href="module-core.html">core</a></li>
+        <li><a href="module-factories.html">factories</a></li>
+        <li><a href="module-loaders.html">loaders</a></li>
+        <li><a href="module-owen.html">owen</a></li>
+        <li><a href="module-states.html">states</a></li>
+      </ul>
+      <h3>Classes</h3>
+      <ul>
+        <li>
+          <a href="module-StateHandler.StateHandler.html">StateHandler</a>
+        </li>
+        <li><a href="module-animation.AnimationClip.html">AnimationClip</a></li>
+        <li>
+          <a href="module-animation.AnimationClipFactory.html"
+            >AnimationClipFactory</a
+          >
+        </li>
+        <li>
+          <a
+            href="module-animation_AnimationNameMapper.AnimationNameMapper.html"
+            >AnimationNameMapper</a
+          >
+        </li>
+        <li>
+          <a href="module-core.OwenAnimationContext.html"
+            >OwenAnimationContext</a
+          >
+        </li>
+        <li>
+          <a href="module-factories.OwenSystemFactory.html"
+            >OwenSystemFactory</a
+          >
+        </li>
+        <li>
+          <a href="module-loaders.AnimationLoader.html">AnimationLoader</a>
+        </li>
+        <li>
+          <a href="module-loaders.GLTFAnimationLoader.html"
+            >GLTFAnimationLoader</a
+          >
+        </li>
+        <li>
+          <a href="module-states.ReactStateHandler.html">ReactStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.SleepStateHandler.html">SleepStateHandler</a>
+        </li>
+        <li><a href="module-states.StateFactory.html">StateFactory</a></li>
+        <li>
+          <a href="module-states.TypeStateHandler.html">TypeStateHandler</a>
+        </li>
+        <li>
+          <a href="module-states.WaitStateHandler.html">WaitStateHandler</a>
+        </li>
+      </ul>
+    </nav>
+
+    <br class="clear" />
+
+    <footer>
+      Documentation generated by
+      <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat May 24
+      2025 12:29:38 GMT+0200 (Midden-Europese zomertijd)
+    </footer>
+
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>
