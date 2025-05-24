@@ -103,7 +103,7 @@ customStates.set("custom", CustomStateHandler);
 const owenSystem = await OwenSystemFactory.createCustomOwenSystem(gltfModel, scene, customStates);
 
 // Manual state transitions
-await owenSystem.transitionTo(States.REACT, Emotions.HAPPY);
+await owenSystem.transitionTo(States.REACTING, Emotions.HAPPY);
 ```
 
 ## 🎮 Animation Naming Convention

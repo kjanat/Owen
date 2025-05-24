@@ -17,7 +17,7 @@ export class SleepStateHandler extends StateHandler {
    * @param {OwenAnimationContext} context - The animation context
    */
   constructor (context) {
-    super(States.SLEEP, context)
+      super(States.SLEEPING, context)
 
     /**
      * Sleep animation clip
@@ -39,7 +39,7 @@ export class SleepStateHandler extends StateHandler {
    * @returns {Promise<void>}
    */
   async enter (fromState = null, _emotion = Emotions.NEUTRAL) {
-    console.log(`Entering SLEEP state from ${fromState}`)
+      console.log(`Entering SLEEPING state from ${fromState}`)
 
     // Play sleep transition if available
     const sleepTransition = this.context.getClip('wait_2sleep_T')
@@ -65,7 +65,7 @@ export class SleepStateHandler extends StateHandler {
    * @returns {Promise<void>}
    */
   async exit (toState = null, _emotion = Emotions.NEUTRAL) {
-    console.log(`Exiting SLEEP state to ${toState}`)
+      console.log(`Exiting SLEEPING state to ${toState}`)
     this.isDeepSleep = false
 
     if (this.currentClip) {
@@ -107,8 +107,8 @@ export class SleepStateHandler extends StateHandler {
     // Any message should wake up the character
     if (this.isDeepSleep) {
       console.log('Waking up due to user message')
-      // This will trigger a state transition to REACT
-      await this.context.transitionTo(States.REACT)
+        // This will trigger a state transition to REACTING
+        await this.context.transitionTo(States.REACTING)
     }
   }
 
@@ -117,7 +117,7 @@ export class SleepStateHandler extends StateHandler {
    * @returns {string[]} Array of available state transitions
    */
   getAvailableTransitions () {
-    return [States.WAIT, States.REACT]
+      return [ States.WAITING, States.REACTING ]
   }
 
   /**
@@ -134,7 +134,7 @@ export class SleepStateHandler extends StateHandler {
    */
   async wakeUp () {
     if (this.isDeepSleep) {
-      await this.context.transitionTo(States.WAIT)
+        await this.context.transitionTo(States.WAITING)
     }
   }
 }

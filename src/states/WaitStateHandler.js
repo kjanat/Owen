@@ -17,7 +17,7 @@ export class WaitStateHandler extends StateHandler {
      * @param {OwenAnimationContext} context - The animation context
      */
   constructor (context) {
-    super(States.WAIT, context)
+      super(States.WAITING, context)
 
     /**
          * The main idle animation clip
@@ -51,7 +51,7 @@ export class WaitStateHandler extends StateHandler {
      * @returns {Promise<void>}
      */
   async enter (fromState = null, _emotion = Emotions.NEUTRAL) {
-    console.log(`Entering WAIT state from ${fromState}`)
+      console.log(`Entering WAITING state from ${fromState}`)
 
     // Play idle loop
     this.idleClip = this.context.getClip('wait_idle_L')
@@ -72,7 +72,7 @@ export class WaitStateHandler extends StateHandler {
      * @returns {Promise<void>}
      */
   async exit (toState = null, _emotion = Emotions.NEUTRAL) {
-    console.log(`Exiting WAIT state to ${toState}`)
+      console.log(`Exiting WAITING state to ${toState}`)
 
     if (this.currentClip) {
       await this.stopCurrentClip()
@@ -133,6 +133,6 @@ export class WaitStateHandler extends StateHandler {
      * @returns {string[]} Array of available state transitions
      */
   getAvailableTransitions () {
-    return [States.REACT, States.SLEEP]
+      return [ States.REACTING, States.SLEEPING ]
   }
 }

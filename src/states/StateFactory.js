@@ -26,10 +26,10 @@ export class StateFactory {
     this.stateHandlers = new Map()
 
     // Register default state handlers
-    this.registerStateHandler(States.WAIT, WaitStateHandler)
-    this.registerStateHandler(States.REACT, ReactStateHandler)
-    this.registerStateHandler(States.TYPE, TypeStateHandler)
-    this.registerStateHandler(States.SLEEP, SleepStateHandler)
+      this.registerStateHandler(States.WAITING, WaitStateHandler);
+      this.registerStateHandler(States.REACTING, ReactStateHandler);
+      this.registerStateHandler(States.TYPING, TypeStateHandler);
+      this.registerStateHandler(States.SLEEPING, SleepStateHandler)
   }
 
   /**

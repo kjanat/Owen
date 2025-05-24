@@ -17,7 +17,7 @@ export class TypeStateHandler extends StateHandler {
    * @param {OwenAnimationContext} context - The animation context
    */
   constructor (context) {
-    super(States.TYPE, context)
+      super(States.TYPING, context)
 
     /**
      * Current emotional state
@@ -39,7 +39,7 @@ export class TypeStateHandler extends StateHandler {
    * @returns {Promise<void>}
    */
   async enter (_fromState = null, emotion = Emotions.NEUTRAL) {
-    console.log(`Entering TYPE state with emotion: ${emotion}`)
+      console.log(`Entering TYPING state with emotion: ${emotion}`)
     this.emotion = emotion
     this.isTyping = true
 
@@ -63,7 +63,7 @@ export class TypeStateHandler extends StateHandler {
    * @returns {Promise<void>}
    */
   async exit (toState = null, _emotion = Emotions.NEUTRAL) {
-    console.log(`Exiting TYPE state to ${toState}`)
+      console.log(`Exiting TYPING state to ${toState}`)
     this.isTyping = false
 
     if (this.currentClip) {
@@ -106,7 +106,7 @@ export class TypeStateHandler extends StateHandler {
    * @returns {string[]} Array of available state transitions
    */
   getAvailableTransitions () {
-    return [States.WAIT, States.REACT]
+      return [ States.WAITING, States.REACTING ]
   }
 
   /**

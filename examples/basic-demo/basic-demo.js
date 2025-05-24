@@ -177,16 +177,16 @@ class OwenDemo {
 
       switch (event.key) {
         case '1':
-          this.owenSystem.transitionTo(States.WAIT)
+              this.owenSystem.transitionTo(States.WAITING)
           break
         case '2':
-          this.owenSystem.transitionTo(States.REACT)
+              this.owenSystem.transitionTo(States.REACTING)
           break
         case '3':
-          this.owenSystem.transitionTo(States.TYPE)
+              this.owenSystem.transitionTo(States.TYPING)
           break
         case '4':
-          this.owenSystem.transitionTo(States.SLEEP)
+              this.owenSystem.transitionTo(States.SLEEPING)
           break
         case ' ':
           this.sendTestMessage()

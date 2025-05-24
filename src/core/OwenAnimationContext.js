@@ -59,7 +59,7 @@ export class OwenAnimationContext {
      * Current active state
      * @type {string}
      */
-    this.currentState = States.WAIT
+      this.currentState = States.WAITING
 
     /**
      * Current active state handler
@@ -105,7 +105,7 @@ export class OwenAnimationContext {
     this.initializeStates()
 
     // Start in wait state
-    await this.transitionTo(States.WAIT)
+      await this.transitionTo(States.WAITING)
 
     this.initialized = true
     console.log('Owen Animation System initialized')
@@ -167,8 +167,8 @@ export class OwenAnimationContext {
     this.onUserActivity()
 
     // If sleeping, wake up first
-    if (this.currentState === States.SLEEP) {
-      await this.transitionTo(States.REACT)
+      if (this.currentState === States.SLEEPING) {
+          await this.transitionTo(States.REACTING)
     }
 
     // Let current state handle the message
@@ -177,10 +177,10 @@ export class OwenAnimationContext {
     }
 
     // Transition to appropriate next state based on current state
-    if (this.currentState === States.WAIT) {
-      await this.transitionTo(States.REACT)
-    } else if (this.currentState === States.REACT) {
-      await this.transitionTo(States.TYPE)
+      if (this.currentState === States.WAITING) {
+          await this.transitionTo(States.REACTING);
+      } else if (this.currentState === States.REACTING) {
+          await this.transitionTo(States.TYPING)
     }
   }
 
@@ -192,8 +192,8 @@ export class OwenAnimationContext {
     this.resetActivityTimer()
 
     // Wake up if sleeping
-    if (this.currentState === States.SLEEP) {
-      this.transitionTo(States.WAIT)
+      if (this.currentState === States.SLEEPING) {
+          this.transitionTo(States.WAITING)
     }
   }
 
@@ -213,7 +213,7 @@ export class OwenAnimationContext {
    */
   async handleInactivity () {
     console.log('Inactivity detected, transitioning to sleep')
-    await this.transitionTo(States.SLEEP)
+      await this.transitionTo(States.SLEEPING)
   }
 
   /**
@@ -234,7 +234,7 @@ export class OwenAnimationContext {
 
     // Update inactivity timer
     this.inactivityTimer += deltaTime
-    if (this.inactivityTimer > this.inactivityTimeout && this.currentState !== States.SLEEP) {
+      if (this.inactivityTimer > this.inactivityTimeout && this.currentState !== States.SLEEPING) {
       this.handleInactivity()
     }
   }

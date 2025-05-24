@@ -92,7 +92,7 @@ class SimpleOwenExample {
    * @returns {Promise<void>}
    */
   async demonstrateStateTransitions () {
-    const states = [States.REACT, States.TYPE, States.WAIT, States.SLEEP]
+      const states = [ States.REACTING, States.TYPING, States.WAITING, States.SLEEPING ]
 
     for (const state of states) {
       console.log(`🔄 Transitioning to ${state.toUpperCase()} state...`)

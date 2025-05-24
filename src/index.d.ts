@@ -16,10 +16,10 @@ export const ClipTypes: {
 };
 
 export const States: {
-  readonly WAIT: 'wait';
-  readonly REACT: 'react';
-  readonly TYPE: 'type';
-  readonly SLEEP: 'sleep';
+    readonly WAITING: 'wait';
+    readonly REACTING: 'react';
+    readonly TYPING: 'type';
+    readonly SLEEPING: 'sleep';
 };
 
 export const Emotions: {

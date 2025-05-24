@@ -1,10 +1,19 @@
-<!DOCTYPE html>
+<!DOCTYPING html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owen Animation System Test</title>
+    <title>Owen Animation System Demo - Implementation Test</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!--
+    This demo has been refactored to mock the actual Owen Animation System implementation.
+    It follows the same architectural patterns:
+    - OwenAnimationContext as the main controller
+    - State handlers for each state (Wait, React, Type, Sleep)
+    - Animation clips with proper naming convention
+    - Constants matching the real implementation
+    - Dependency injection and factory patterns
+    -->
     <style>
         body {
             margin: 0;
@@ -13,13 +22,13 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
         }
-        
+
         #container {
             position: relative;
             width: 100vw;
             height: 100vh;
         }
-        
+
         #controls {
             position: absolute;
             top: 20px;
@@ -32,24 +41,24 @@
             z-index: 100;
             min-width: 300px;
         }
-        
+
         h2 {
             margin: 0 0 15px 0;
             color: #333;
             font-size: 18px;
         }
-        
+
         .control-group {
             margin-bottom: 15px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 5px;
             color: #555;
             font-weight: 500;
         }
-        
+
         button {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
@@ -61,16 +70,16 @@
             font-size: 14px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        
+
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         button:active {
             transform: translateY(0);
         }
-        
+
         input[type="text"] {
             width: 100%;
             padding: 8px 12px;
@@ -80,12 +89,12 @@
             margin-bottom: 10px;
             box-sizing: border-box;
         }
-        
+
         input[type="text"]:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         #status {
             position: absolute;
             bottom: 20px;
@@ -98,27 +107,27 @@
             font-size: 14px;
             max-width: 400px;
         }
-        
+
         .status-line {
             margin-bottom: 5px;
         }
-        
+
         .status-line:last-child {
             margin-bottom: 0;
         }
-        
+
         .emotion-buttons {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
         }
-        
+
         .emotion-neutral { background: linear-gradient(45deg, #4CAF50, #45a049); }
         .emotion-angry { background: linear-gradient(45deg, #f44336, #d32f2f); }
         .emotion-shocked { background: linear-gradient(45deg, #ff9800, #f57c00); }
         .emotion-happy { background: linear-gradient(45deg, #ffeb3b, #fbc02d); color: #333; }
         .emotion-sad { background: linear-gradient(45deg, #2196f3, #1976d2); }
-        
+
         #owen-character {
             position: absolute;
             right: 50px;
@@ -133,12 +142,12 @@
             justify-content: center;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
-        
+
         .owen-avatar {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -146,15 +155,22 @@
             color: white;
             margin-bottom: 20px;
             transition: transform 0.3s ease;
+            overflow: hidden;
         }
-        
+
+        .owen-avatar svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
         .owen-state {
             font-size: 18px;
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
         }
-        
+
         .owen-emotion {
             font-size: 14px;
             color: #666;
@@ -162,7 +178,7 @@
             padding: 5px 10px;
             border-radius: 15px;
         }
-        
+
         .animation-list {
             max-height: 150px;
             overflow-y: auto;
@@ -171,7 +187,7 @@
             padding: 10px;
             background: #f9f9f9;
         }
-        
+
         .animation-item {
             padding: 5px;
             margin: 2px 0;
@@ -179,19 +195,19 @@
             font-size: 12px;
             font-family: monospace;
         }
-        
+
         .animation-playing {
             background: #e8f5e8;
             color: #2e7d32;
             font-weight: bold;
         }
-        
+
         .typing-indicator {
             display: none;
             color: #667eea;
             font-style: italic;
         }
-        
+
         .typing-indicator.active {
             display: block;
         }
@@ -200,15 +216,15 @@
 <body>
     <div id="container">
         <div id="controls">
-            <h2>🤖 Owen Animation Control Panel</h2>
-            
+            <h2>🤖 Owen Animation System Demo</h2>
+
             <div class="control-group">
                 <label>Send Message to Owen:</label>
                 <input type="text" id="messageInput" placeholder="Type a message..." />
                 <button onclick="sendMessage()">Send Message</button>
                 <div class="typing-indicator" id="typingIndicator">Owen is typing...</div>
             </div>
-            
+
             <div class="control-group">
                 <label>Manual State Transitions:</label>
                 <button onclick="transitionTo('wait')">Wait</button>
@@ -216,7 +232,7 @@
                 <button onclick="transitionTo('type')">Type</button>
                 <button onclick="transitionTo('sleep')">Sleep</button>
             </div>
-            
+
             <div class="control-group">
                 <label>Test Emotions:</label>
                 <div class="emotion-buttons">
@@ -227,7 +243,7 @@
                     <button class="emotion-sad" onclick="testEmotion('sad')">😢 Sad</button>
                 </div>
             </div>
-            
+
             <div class="control-group">
                 <label>Quick Test Messages:</label>
                 <button onclick="quickMessage('Hello Owen! How are you?')">Friendly</button>
@@ -235,14 +251,14 @@
                 <button onclick="quickMessage('Great job on the project!')">Praise</button>
                 <button onclick="quickMessage('We have a problem...')">Problem</button>
             </div>
-            
+
             <div class="control-group">
                 <label>System Controls:</label>
                 <button onclick="simulateActivity()">Simulate Activity</button>
                 <button onclick="simulateInactivity()">Force Sleep</button>
                 <button onclick="resetSystem()">Reset</button>
             </div>
-            
+
             <div class="control-group">
                 <label>Active Animations:</label>
                 <div class="animation-list" id="animationList">
@@ -250,7 +266,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div id="status">
             <div class="status-line"><strong>Owen System Status</strong></div>
             <div class="status-line">State: <span id="currentState">Initializing</span></div>
@@ -258,288 +274,603 @@
             <div class="status-line">Last Activity: <span id="lastActivity">Now</span></div>
             <div class="status-line">Active Clips: <span id="activeClips">0</span></div>
         </div>
-        
+
         <div id="owen-character">
-            <div class="owen-avatar" id="owenAvatar">🤖</div>
+            <div class="owen-avatar" id="owenAvatar">
+                <!-- SVG will be inserted here by JavaScript -->
+                <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="35" fill="#4CAF50" stroke="#333" stroke-width="2"/>
+                    <ellipse cx="45" cy="40" rx="15" ry="10" fill="white" opacity="0.3"/>
+                    <circle cx="35" cy="45" r="5" fill="#333"/>
+                    <circle cx="65" cy="45" r="5" fill="#333"/>
+                    <path d="M 30 65 Q 50 75 70 65" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    <line x1="50" y1="15" x2="50" y2="5" stroke="#333" stroke-width="2"/>
+                    <circle cx="50" cy="5" r="2" fill="#ff4444"/>
+                </svg>
+            </div>
             <div class="owen-state" id="owenState">Initializing...</div>
             <div class="owen-emotion" id="owenEmotion">Neutral</div>
         </div>
     </div>
 
     <script>
-        // Import the Owen system (in a real scenario, this would be imported)
-        // For this demo, we'll include a simplified version inline
-        
-        // Mock Owen Animation System for Testing
-        class MockOwenSystem {
-            constructor() {
-                this.currentState = 'wait';
-                this.currentEmotion = 'neutral';
-                this.lastActivity = Date.now();
-                this.activeAnimations = new Set();
-                this.isTyping = false;
-                this.messageQueue = [];
-                
-                // Mock animation clips based on the naming convention
-                this.availableClips = [
-                    'wait_idle_L',
-                    'wait_pickNose_Q',
-                    'wait_wave_Q',
-                    'wait_2react_T',
-                    'wait_2sleep_T',
-                    'react_idle_L',
-                    'react_2type_T',
-                    'react_angry2type_an_T',
-                    'react_shock2type_sh_T',
-                    'type_idle_L',
-                    'type_angry_L',
-                    'type_shocked_L',
-                    'type_2wait_T',
-                    'type_angry2wait_T',
-                    'type_shocked2wait_T',
-                    'sleep_idle_L',
-                    'sleep_2wait_T'
-                ];
-                
-                this.stateColors = {
-                    wait: '#4CAF50',
-                    react: '#ff9800',
-                    type: '#2196f3',
-                    sleep: '#9c27b0'
-                };
-                
-                this.emotionEmojis = {
-                    neutral: '😊',
-                    angry: '😠',
-                    shocked: '😲',
-                    happy: '😄',
-                    sad: '😢'
-                };
-                
-                this.inactivityTimer = null;
-                this.quirkTimer = null;
+        // Mock Owen Animation System based on actual implementation structure
+        // This simulates the real Owen system for testing purposes
+
+        // Constants matching the real implementation
+        const States = {
+            WAITING: 'wait',
+            REACTING: 'react',
+            TYPING: 'type',
+            SLEEPING: 'sleep'
+        };
+
+        const Emotions = {
+            NEUTRAL: '',
+            ANGRY: 'an',
+            SHOCKED: 'sh',
+            HAPPY: 'ha',
+            SAD: 'sa'
+        };
+
+        const Config = {
+            DEFAULT_FADE_IN: 0.3,
+            DEFAULT_FADE_OUT: 0.3,
+            QUIRK_INTERVAL: 5000,
+            INACTIVITY_TIMEOUT: 15000,
+            QUIRK_PROBABILITY: 0.3
+        };
+
+        // Mock AnimationClip class
+        class MockAnimationClip {
+            constructor(name, type, state, emotion = '') {
+                this.name = name;
+                this.type = type;
+                this.state = state;
+                this.emotion = emotion;
+                this.action = null;
+                this.isPlaying = false;
             }
-            
-            async initialize() {
-                console.log('Owen system initializing...');
-                await this.transitionTo('wait');
-                this.startQuirkTimer();
-                this.updateUI();
-                console.log('Owen system ready!');
+
+            play() {
+                this.isPlaying = true;
+                console.log(`Playing animation: ${this.name}`);
             }
-            
-            async transitionTo(newState, emotion = 'neutral') {
-                const fromState = this.currentState;
-                console.log(`Transitioning from ${fromState} to ${newState} with emotion: ${emotion}`);
-                
-                // Stop current animations
-                this.stopAllAnimations();
-                
-                // Play transition animation if available
-                const transitionClip = `${fromState}_2${newState}_T`;
-                if (this.availableClips.includes(transitionClip)) {
-                    await this.playAnimation(transitionClip, 500);
+
+            stop() {
+                this.isPlaying = false;
+                console.log(`Stopping animation: ${this.name}`);
+            }
+        }
+
+        // Mock StateHandler base class
+        class MockStateHandler {
+            constructor(stateName, context) {
+                this.stateName = stateName;
+                this.context = context;
+                this.currentClip = null;
+            }
+
+            async enter(fromState = null, emotion = Emotions.NEUTRAL) {
+                console.log(`Entering ${this.stateName} state from ${fromState} with emotion: ${emotion}`);
+                // Play appropriate idle animation
+                const clipName = this.getIdleClipName(emotion);
+                await this.playClip(clipName);
+            }
+
+            async exit(toState, emotion = Emotions.NEUTRAL) {
+                console.log(`Exiting ${this.stateName} state to ${toState} with emotion: ${emotion}`);
+                if (this.currentClip) {
+                    this.currentClip.stop();
+                    this.currentClip = null;
                 }
-                
-                // Update state
-                this.currentState = newState;
-                this.currentEmotion = emotion;
-                this.lastActivity = Date.now();
-                
-                // Play state animation
-                await this.enterState(newState, emotion);
-                
-                this.updateUI();
-                this.resetInactivityTimer();
             }
-            
-            async enterState(state, emotion = 'neutral') {
-                let clipName = `${state}_idle_L`;
-                
-                // Handle emotional states
-                if (emotion !== 'neutral' && (state === 'type' || state === 'react')) {
-                    const emotionCode = this.getEmotionCode(emotion);
-                    const emotionalClip = `${state}_${emotionCode}_L`;
-                    if (this.availableClips.includes(emotionalClip)) {
-                        clipName = emotionalClip;
+
+            getIdleClipName(emotion) {
+                return `${this.stateName}_idle_L`;
+            }
+
+            async playClip(clipName) {
+                const clip = this.context.getClip(clipName);
+                if (clip) {
+                    if (this.currentClip) {
+                        this.currentClip.stop();
+                    }
+                    this.currentClip = clip;
+                    clip.play();
+                    this.context.activeAnimations.add(clipName);
+
+                    // Simulate animation duration
+                    setTimeout(() => {
+                        this.context.activeAnimations.delete(clipName);
+                        this.context.updateAnimationList();
+                    }, clipName.includes('_T') ? 500 : 2000);
+                }
+            }
+
+            update(deltaTime) {
+                // Base update implementation
+            }
+
+            async handleMessage(message) {
+                // Base message handling
+                console.log(`${this.stateName} state handling message: "${message}"`);
+            }
+        }
+
+        // Wait State Handler
+        class MockWaitStateHandler extends MockStateHandler {
+            constructor(context) {
+                super(States.WAITING, context);
+                this.quirkTimer = 0;
+                this.quirkInterval = Config.QUIRK_INTERVAL;
+            }
+
+            update(deltaTime) {
+                super.update(deltaTime);
+
+                // Handle quirk animations
+                this.quirkTimer += deltaTime;
+                if (this.quirkTimer > this.quirkInterval && Math.random() < Config.QUIRK_PROBABILITY) {
+                    this.playRandomQuirk();
+                    this.quirkTimer = 0;
+                }
+            }
+
+            playRandomQuirk() {
+                const quirkClips = this.context.getClipsByPattern('wait_*_Q');
+                if (quirkClips.length > 0) {
+                    const randomQuirk = quirkClips[Math.floor(Math.random() * quirkClips.length)];
+                    this.playClip(randomQuirk.name);
+                }
+            }
+        }
+
+        // React State Handler
+        class MockReactStateHandler extends MockStateHandler {
+            constructor(context) {
+                super(States.REACTING, context);
+            }
+
+            getIdleClipName(emotion) {
+                if (emotion && emotion !== Emotions.NEUTRAL) {
+                    const emotionalClip = `${this.stateName}_${emotion}_L`;
+                    if (this.context.getClip(emotionalClip)) {
+                        return emotionalClip;
                     }
                 }
-                
-                if (this.availableClips.includes(clipName)) {
-                    this.playAnimation(clipName);
+                return super.getIdleClipName(emotion);
+            }
+        }
+
+        // Type State Handler
+        class MockTypeStateHandler extends MockStateHandler {
+            constructor(context) {
+                super(States.TYPING, context);
+            }
+
+            async enter(fromState = null, emotion = Emotions.NEUTRAL) {
+                await super.enter(fromState, emotion);
+                this.context.isTyping = true;
+            }
+
+            async exit(toState, emotion = Emotions.NEUTRAL) {
+                this.context.isTyping = false;
+                await super.exit(toState, emotion);
+            }
+
+            getIdleClipName(emotion) {
+                if (emotion && emotion !== Emotions.NEUTRAL) {
+                    const emotionalClip = `${this.stateName}_${emotion}_L`;
+                    if (this.context.getClip(emotionalClip)) {
+                        return emotionalClip;
+                    }
                 }
-                
-                // Handle state-specific logic
-                switch (state) {
-                    case 'wait':
-                        this.startQuirkTimer();
-                        break;
-                    case 'type':
-                        this.isTyping = true;
-                        document.getElementById('typingIndicator').classList.add('active');
-                        break;
-                    case 'sleep':
-                        this.stopQuirkTimer();
-                        setTimeout(() => {
-                            if (this.currentState === 'sleep') {
-                                this.transitionTo('wait');
-                            }
-                        }, 10000); // Wake up after 10 seconds in demo
-                        break;
+                return super.getIdleClipName(emotion);
+            }
+        }
+
+        // Sleep State Handler
+        class MockSleepStateHandler extends MockStateHandler {
+            constructor(context) {
+                super(States.SLEEPING, context);
+            }
+        }
+
+        // Mock Owen Animation Context (main system)
+        class MockOwenAnimationContext {
+            constructor() {
+                this.model = null;
+                this.mixer = null;
+                this.clips = new Map();
+                this.states = new Map();
+                this.currentState = States.WAITING;
+                this.currentStateHandler = null;
+                this.inactivityTimer = 0;
+                this.inactivityTimeout = Config.INACTIVITY_TIMEOUT;
+                this.initialized = false;
+                this.activeAnimations = new Set();
+                this.isTyping = false;
+
+                this.stateColors = {
+                    [States.WAITING]: '#4CAF50',
+                    [States.REACTING]: '#ff9800',
+                    [States.TYPING]: '#2196f3',
+                    [States.SLEEPING]: '#9c27b0'
+                };
+
+                // SVG graphics for each state/emotion combination
+                this.svgGraphics = this.createSVGGraphics();
+
+                this.lastActivity = Date.now();
+            }
+
+            async initialize() {
+                if (this.initialized) return;
+
+                // Create mock animation clips following the naming convention
+                this.createMockClips();
+
+                // Initialize state handlers
+                this.initializeStates();
+
+                // Start in wait state
+                await this.transitionTo(States.WAITING);
+
+                this.initialized = true;
+                console.log('Owen Animation System initialized');
+            }
+
+            createSVGGraphics() {
+                const svgs = {};
+
+                // Base robot head SVG template
+                const createRobotSVG = (state, emotion) => {
+                    const baseColor = this.stateColors[state] || '#4CAF50';
+
+                    // Define facial expressions for emotions
+                    const expressions = {
+                        [Emotions.NEUTRAL]: {
+                            eyes: '<circle cx="35" cy="45" r="5" fill="#333"/><circle cx="65" cy="45" r="5" fill="#333"/>',
+                            mouth: '<path d="M 30 65 Q 50 75 70 65" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>'
+                        },
+                        [Emotions.ANGRY]: {
+                            eyes: '<path d="M 30 40 L 40 50 M 60 50 L 70 40" stroke="#333" stroke-width="4" stroke-linecap="round"/>',
+                            mouth: '<path d="M 30 70 Q 50 60 70 70" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>'
+                        },
+                        [Emotions.SHOCKED]: {
+                            eyes: '<circle cx="35" cy="45" r="8" fill="#333"/><circle cx="65" cy="45" r="8" fill="#333"/>',
+                            mouth: '<ellipse cx="50" cy="68" rx="8" ry="12" fill="#333"/>'
+                        },
+                        [Emotions.HAPPY]: {
+                            eyes: '<path d="M 30 40 Q 35 50 40 40 M 60 40 Q 65 50 70 40" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>',
+                            mouth: '<path d="M 25 60 Q 50 80 75 60" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>'
+                        },
+                        [Emotions.SAD]: {
+                            eyes: '<circle cx="35" cy="45" r="4" fill="#333"/><circle cx="65" cy="45" r="4" fill="#333"/><path d="M 33 50 Q 35 55 37 50 M 63 50 Q 65 55 67 50" stroke="#4A90E2" stroke-width="2" fill="none"/>',
+                            mouth: '<path d="M 30 70 Q 50 60 70 70" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>'
+                        }
+                    };
+
+                    // Add state-specific indicators
+                    const stateIndicators = {
+                        [States.WAITING]: '',
+                        [States.REACTING]: '<circle cx="85" cy="25" r="3" fill="#ff9800" opacity="0.8"><animate attributeName="opacity" values="0.8;0.3;0.8" dur="1s" repeatCount="indefinite"/></circle>',
+                        [States.TYPING]: '<rect x="20" y="85" width="6" height="4" fill="#2196f3" rx="1"><animate attributeName="opacity" values="1;0.3;1" dur="0.5s" repeatCount="indefinite"/></rect><rect x="30" y="85" width="6" height="4" fill="#2196f3" rx="1"><animate attributeName="opacity" values="1;0.3;1" dur="0.5s" begin="0.2s" repeatCount="indefinite"/></rect><rect x="40" y="85" width="6" height="4" fill="#2196f3" rx="1"><animate attributeName="opacity" values="1;0.3;1" dur="0.5s" begin="0.4s" repeatCount="indefinite"/></rect>',
+                        [States.SLEEPING]: '<path d="M 20 20 Q 25 15 30 20 Q 35 25 40 20" stroke="#9c27b0" stroke-width="2" fill="none" opacity="0.7"><animate attributeName="opacity" values="0.7;0.2;0.7" dur="2s" repeatCount="indefinite"/></path><text x="45" y="18" font-family="Arial" font-size="8" fill="#9c27b0" opacity="0.7">Z<animate attributeName="opacity" values="0.7;0.2;0.7" dur="2s" begin="0.5s" repeatCount="indefinite"/></text><text x="55" y="15" font-family="Arial" font-size="6" fill="#9c27b0" opacity="0.7">z<animate attributeName="opacity" values="0.7;0.2;0.7" dur="2s" begin="1s" repeatCount="indefinite"/></text>'
+                    };
+
+                    const expr = expressions[emotion] || expressions[Emotions.NEUTRAL];
+
+                    return `<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Robot head -->
+                        <circle cx="50" cy="50" r="35" fill="${baseColor}" stroke="#333" stroke-width="2"/>
+                        <!-- Head highlight -->
+                        <ellipse cx="45" cy="40" rx="15" ry="10" fill="white" opacity="0.3"/>
+                        <!-- Eyes -->
+                        ${expr.eyes}
+                        <!-- Mouth -->
+                        ${expr.mouth}
+                        <!-- Antenna -->
+                        <line x1="50" y1="15" x2="50" y2="5" stroke="#333" stroke-width="2"/>
+                        <circle cx="50" cy="5" r="2" fill="#ff4444"/>
+                        <!-- State indicator -->
+                        ${stateIndicators[state] || ''}
+                    </svg>`;
+                };
+
+                // Generate all combinations
+                const states = [States.WAITING, States.REACTING, States.TYPING, States.SLEEPING];
+                const emotions = [Emotions.NEUTRAL, Emotions.ANGRY, Emotions.SHOCKED, Emotions.HAPPY, Emotions.SAD];
+
+                states.forEach(state => {
+                    emotions.forEach(emotion => {
+                        const key = `${state}_${emotion || 'neutral'}`;
+                        svgs[key] = createRobotSVG(state, emotion);
+                    });
+                });
+
+                return svgs;
+            }
+
+            createMockClips() {
+                const clipDefinitions = [
+                    // Wait state clips
+                    { name: 'wait_idle_L', state: 'wait', type: 'L' },
+                    { name: 'wait_pickNose_Q', state: 'wait', type: 'Q' },
+                    { name: 'wait_wave_Q', state: 'wait', type: 'Q' },
+                    { name: 'wait_2react_T', state: 'wait', type: 'T' },
+                    { name: 'wait_2sleep_T', state: 'wait', type: 'T' },
+
+                    // React state clips
+                    { name: 'react_idle_L', state: 'react', type: 'L' },
+                    { name: 'react_an_L', state: 'react', type: 'L', emotion: 'an' },
+                    { name: 'react_sh_L', state: 'react', type: 'L', emotion: 'sh' },
+                    { name: 'react_2type_T', state: 'react', type: 'T' },
+                    { name: 'react_an2type_T', state: 'react', type: 'T', emotion: 'an' },
+                    { name: 'react_sh2type_T', state: 'react', type: 'T', emotion: 'sh' },
+
+                    // Type state clips
+                    { name: 'type_idle_L', state: 'type', type: 'L' },
+                    { name: 'type_an_L', state: 'type', type: 'L', emotion: 'an' },
+                    { name: 'type_sh_L', state: 'type', type: 'L', emotion: 'sh' },
+                    { name: 'type_2wait_T', state: 'type', type: 'T' },
+                    { name: 'type_an2wait_T', state: 'type', type: 'T', emotion: 'an' },
+                    { name: 'type_sh2wait_T', state: 'type', type: 'T', emotion: 'sh' },
+
+                    // Sleep state clips
+                    { name: 'sleep_idle_L', state: 'sleep', type: 'L' },
+                    { name: 'sleep_2wait_T', state: 'sleep', type: 'T' }
+                ];
+
+                for (const def of clipDefinitions) {
+                    const clip = new MockAnimationClip(def.name, def.type, def.state, def.emotion || '');
+                    this.clips.set(def.name, clip);
                 }
             }
-            
+
+            initializeStates() {
+                this.states.set(States.WAITING, new MockWaitStateHandler(this));
+                this.states.set(States.REACTING, new MockReactStateHandler(this));
+                this.states.set(States.TYPING, new MockTypeStateHandler(this));
+                this.states.set(States.SLEEPING, new MockSleepStateHandler(this));
+            }
+
+            async transitionTo(newState, emotion = Emotions.NEUTRAL) {
+                if (newState === this.currentState) return;
+
+                const fromState = this.currentState;
+                console.log(`Transitioning from ${fromState} to ${newState} with emotion: ${emotion}`);
+
+                // Exit current state
+                if (this.currentStateHandler) {
+                    await this.currentStateHandler.exit(newState, emotion);
+                }
+
+                // Play transition animation if available
+                const transitionClip = `${fromState}_2${newState}_T`;
+                const emotionalTransition = emotion && emotion !== Emotions.NEUTRAL ?
+                    `${fromState}_${emotion}2${newState}_T` : null;
+
+                const clipToPlay = (emotionalTransition && this.getClip(emotionalTransition)) ?
+                    emotionalTransition : transitionClip;
+
+                if (this.getClip(clipToPlay)) {
+                    await this.playTransitionAnimation(clipToPlay);
+                }
+
+                // Update state
+                this.currentState = newState;
+                this.currentStateHandler = this.states.get(newState);
+                this.lastActivity = Date.now();
+
+                // Enter new state
+                if (this.currentStateHandler) {
+                    await this.currentStateHandler.enter(fromState, emotion);
+                }
+
+                this.updateUI();
+                this.resetActivityTimer();
+            }
+
+            async playTransitionAnimation(clipName) {
+                const clip = this.getClip(clipName);
+                if (clip) {
+                    clip.play();
+                    this.activeAnimations.add(clipName);
+                    this.updateAnimationList();
+
+                    // Wait for transition to complete
+                    await new Promise(resolve => {
+                        setTimeout(() => {
+                            clip.stop();
+                            this.activeAnimations.delete(clipName);
+                            this.updateAnimationList();
+                            resolve();
+                        }, 500);
+                    });
+                }
+            }
+
             async handleUserMessage(message) {
+                console.log(`Handling user message: "${message}"`);
+
                 this.onUserActivity();
-                
+
                 // Analyze message for emotion
                 const emotion = this.analyzeMessageEmotion(message);
-                
-                // Transition to react state
-                if (this.currentState !== 'react') {
-                    await this.transitionTo('react', emotion);
+
+                // If sleeping, wake up first
+                if (this.currentState === States.SLEEPING) {
+                    await this.transitionTo(States.WAITING);
                 }
-                
+
+                // Transition to react state if not already there
+                if (this.currentState === States.WAITING) {
+                    await this.transitionTo(States.REACTING, emotion);
+                }
+
+                // Let current state handle the message
+                if (this.currentStateHandler) {
+                    await this.currentStateHandler.handleMessage(message);
+                }
+
                 // Brief pause to show reaction
                 setTimeout(async () => {
                     // Transition to type state
-                    await this.transitionTo('type', emotion);
-                    
+                    await this.transitionTo(States.TYPING, emotion);
+
+                    // Show typing indicator
+                    document.getElementById('typingIndicator').classList.add('active');
+
                     // Simulate typing duration
                     const typingDuration = Math.min(message.length * 100, 3000);
                     setTimeout(async () => {
-                        this.isTyping = false;
                         document.getElementById('typingIndicator').classList.remove('active');
-                        await this.transitionTo('wait');
+                        await this.transitionTo(States.WAITING);
                     }, typingDuration);
                 }, 1000);
             }
-            
+
             analyzeMessageEmotion(message) {
                 const text = message.toLowerCase();
-                
+
                 if (text.includes('!') || text.includes('urgent') || text.includes('asap') || text.includes('now')) {
-                    return 'shocked';
+                    return Emotions.SHOCKED;
                 }
                 if (text.includes('error') || text.includes('problem') || text.includes('issue') || text.includes('wrong')) {
-                    return 'angry';
+                    return Emotions.ANGRY;
                 }
                 if (text.includes('great') || text.includes('awesome') || text.includes('good') || text.includes('excellent')) {
-                    return 'happy';
+                    return Emotions.HAPPY;
                 }
                 if (text.includes('sad') || text.includes('sorry') || text.includes('disappointed')) {
-                    return 'sad';
+                    return Emotions.SAD;
                 }
-                
-                return 'neutral';
+
+                return Emotions.NEUTRAL;
             }
-            
+
             onUserActivity() {
                 this.lastActivity = Date.now();
-                this.resetInactivityTimer();
-                
+                this.resetActivityTimer();
+
                 // Wake up if sleeping
-                if (this.currentState === 'sleep') {
-                    this.transitionTo('wait');
+                if (this.currentState === States.SLEEPING) {
+                    this.transitionTo(States.WAITING);
                 }
             }
-            
-            resetInactivityTimer() {
-                if (this.inactivityTimer) {
-                    clearTimeout(this.inactivityTimer);
+
+            resetActivityTimer() {
+                this.inactivityTimer = 0;
+            }
+
+            async handleInactivity() {
+                console.log('Inactivity detected, transitioning to sleep');
+                await this.transitionTo(States.SLEEPING);
+            }
+
+            update(deltaTime) {
+                if (!this.initialized) return;
+
+                // Update current state
+                if (this.currentStateHandler) {
+                    this.currentStateHandler.update(deltaTime);
                 }
-                
-                this.inactivityTimer = setTimeout(() => {
-                    if (this.currentState === 'wait') {
-                        this.transitionTo('sleep');
+
+                // Update inactivity timer
+                this.inactivityTimer += deltaTime;
+                if (this.inactivityTimer > this.inactivityTimeout && this.currentState !== States.SLEEPING) {
+                    this.handleInactivity();
+                }
+            }
+
+            // Utility methods
+            getClip(name) {
+                return this.clips.get(name);
+            }
+
+            getClipsByPattern(pattern) {
+                const regex = new RegExp(pattern.replace(/\*/g, '.*'));
+                const matches = [];
+
+                for (const [name, clip] of this.clips) {
+                    if (regex.test(name)) {
+                        matches.push(clip);
                     }
-                }, 15000); // 15 seconds for demo
-            }
-            
-            startQuirkTimer() {
-                this.stopQuirkTimer();
-                this.quirkTimer = setInterval(() => {
-                    if (this.currentState === 'wait' && Math.random() < 0.3) {
-                        this.playRandomQuirk();
-                    }
-                }, 5000);
-            }
-            
-            stopQuirkTimer() {
-                if (this.quirkTimer) {
-                    clearInterval(this.quirkTimer);
-                    this.quirkTimer = null;
                 }
+
+                return matches;
             }
-            
-            playRandomQuirk() {
-                const quirks = this.availableClips.filter(clip => 
-                    clip.startsWith('wait_') && clip.endsWith('_Q')
-                );
-                
-                if (quirks.length > 0) {
-                    const randomQuirk = quirks[Math.floor(Math.random() * quirks.length)];
-                    this.playAnimation(randomQuirk, 2000);
-                }
+
+            getCurrentState() {
+                return this.currentState;
             }
-            
-            async playAnimation(clipName, duration = null) {
-                console.log(`Playing animation: ${clipName}`);
-                this.activeAnimations.add(clipName);
-                this.updateAnimationList();
-                
-                // Simulate animation duration
-                const animDuration = duration || (clipName.includes('_T') ? 500 : 2000);
-                
-                setTimeout(() => {
-                    this.activeAnimations.delete(clipName);
-                    this.updateAnimationList();
-                }, animDuration);
+
+            getCurrentStateHandler() {
+                return this.currentStateHandler;
             }
-            
-            stopAllAnimations() {
-                this.activeAnimations.clear();
-                this.updateAnimationList();
+
+            getAvailableClips() {
+                return Array.from(this.clips.keys());
             }
-            
-            getEmotionCode(emotion) {
-                const emotionCodes = {
-                    angry: 'an',
-                    shocked: 'sh',
-                    happy: 'ha',
-                    sad: 'sa'
-                };
-                return emotionCodes[emotion] || '';
+
+            getAvailableStates() {
+                return Array.from(this.states.keys());
             }
-            
+
             updateUI() {
+                // Convert emotion code back to readable form
+                const emotionMap = {
+                    [Emotions.NEUTRAL]: 'neutral',
+                    [Emotions.ANGRY]: 'angry',
+                    [Emotions.SHOCKED]: 'shocked',
+                    [Emotions.HAPPY]: 'happy',
+                    [Emotions.SAD]: 'sad'
+                };
+
+                const currentEmotion = this.getCurrentEmotion();
+                const emotionName = emotionMap[currentEmotion] || 'neutral';
+
                 // Update status panel
                 document.getElementById('currentState').textContent = this.currentState.toUpperCase();
-                document.getElementById('currentEmotion').textContent = this.currentEmotion;
+                document.getElementById('currentEmotion').textContent = emotionName;
                 document.getElementById('lastActivity').textContent = new Date(this.lastActivity).toLocaleTimeString();
                 document.getElementById('activeClips').textContent = this.activeAnimations.size;
-                
+
                 // Update Owen character
                 const avatar = document.getElementById('owenAvatar');
                 const stateEl = document.getElementById('owenState');
                 const emotionEl = document.getElementById('owenEmotion');
-                
-                avatar.style.background = `linear-gradient(45deg, ${this.stateColors[this.currentState]}, #764ba2)`;
-                avatar.textContent = this.emotionEmojis[this.currentEmotion];
+
+                // Get the appropriate SVG for current state and emotion
+                const svgKey = `${this.currentState}_${currentEmotion || 'neutral'}`;
+                const svgContent = this.svgGraphics[svgKey] || this.svgGraphics[`${this.currentState}_neutral`];
+
+                avatar.innerHTML = svgContent;
+                avatar.style.background = 'transparent'; // Remove background since SVG handles coloring
                 stateEl.textContent = this.currentState.toUpperCase();
-                emotionEl.textContent = this.currentEmotion;
-                
+                emotionEl.textContent = emotionName;
+
                 // Add animation effect
                 avatar.style.transform = 'scale(1.1)';
                 setTimeout(() => {
                     avatar.style.transform = 'scale(1)';
                 }, 200);
             }
-            
+
+            getCurrentEmotion() {
+                // Extract emotion from current state handler or default to neutral
+                if (this.currentStateHandler && this.currentStateHandler.currentClip) {
+                    return this.currentStateHandler.currentClip.emotion || Emotions.NEUTRAL;
+                }
+                return Emotions.NEUTRAL;
+            }
+
             updateAnimationList() {
                 const listEl = document.getElementById('animationList');
                 listEl.innerHTML = '';
-                
+
                 if (this.activeAnimations.size === 0) {
                     listEl.innerHTML = '<div class="animation-item">No active animations</div>';
                 } else {
@@ -551,76 +882,125 @@
                     });
                 }
             }
+
+            dispose() {
+                // Stop all animations
+                for (const [, clip] of this.clips) {
+                    if (clip.isPlaying) {
+                        clip.stop();
+                    }
+                }
+
+                // Clear caches
+                this.clips.clear();
+                this.states.clear();
+                this.activeAnimations.clear();
+
+                this.initialized = false;
+                console.log('Owen Animation System disposed');
+            }
         }
-        
+
         // Global Owen system instance
         let owenSystem;
-        
+
         // Initialize the system
         async function initializeOwen() {
-            owenSystem = new MockOwenSystem();
+            owenSystem = new MockOwenAnimationContext();
             await owenSystem.initialize();
-            
+
             // Add mouse activity listener
             document.addEventListener('mousemove', () => {
                 owenSystem.onUserActivity();
             });
-            
+
             // Add keyboard activity listener
             document.addEventListener('keydown', (e) => {
                 owenSystem.onUserActivity();
-                
+
                 // Send message on Enter
                 if (e.key === 'Enter' && document.activeElement.id === 'messageInput') {
                     sendMessage();
                 }
             });
+
+            // Start update loop
+            startUpdateLoop();
         }
-        
+
+        // Update loop for the system
+        function startUpdateLoop() {
+            let lastTime = performance.now();
+
+            function update() {
+                const currentTime = performance.now();
+                const deltaTime = currentTime - lastTime;
+                lastTime = currentTime;
+
+                if (owenSystem) {
+                    owenSystem.update(deltaTime);
+                }
+
+                requestAnimationFrame(update);
+            }
+
+            update();
+        }
+
         // UI Control Functions
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-            
+
             if (message) {
                 owenSystem.handleUserMessage(message);
                 input.value = '';
             }
         }
-        
+
         function transitionTo(state) {
             owenSystem.transitionTo(state);
         }
-        
-        function testEmotion(emotion) {
+
+        function testEmotion(emotionName) {
+            // Map UI emotion names to emotion codes
+            const emotionMap = {
+                'neutral': Emotions.NEUTRAL,
+                'angry': Emotions.ANGRY,
+                'shocked': Emotions.SHOCKED,
+                'happy': Emotions.HAPPY,
+                'sad': Emotions.SAD
+            };
+
+            const emotion = emotionMap[emotionName] || Emotions.NEUTRAL;
             owenSystem.transitionTo(owenSystem.currentState, emotion);
         }
-        
+
         function quickMessage(message) {
             document.getElementById('messageInput').value = message;
             sendMessage();
         }
-        
+
         function simulateActivity() {
             owenSystem.onUserActivity();
         }
-        
+
         function simulateInactivity() {
-            owenSystem.transitionTo('sleep');
+            owenSystem.transitionTo(States.SLEEPING);
         }
-        
+
         function resetSystem() {
-            owenSystem.transitionTo('wait', 'neutral');
+            owenSystem.transitionTo(States.WAITING, Emotions.NEUTRAL);
         }
-        
+
         // Start the demo when page loads
         window.addEventListener('load', initializeOwen);
-        
+
         // Update UI every second
         setInterval(() => {
             if (owenSystem) {
-                document.getElementById('lastActivity').textContent = 
-                    Math.floor((Date.now() - owenSystem.lastActivity) / 1000) + 's ago';
+                const timeSinceActivity = Math.floor((Date.now() - owenSystem.lastActivity) / 1000);
+                document.getElementById('lastActivity').textContent = timeSinceActivity + 's ago';
             }
         }, 1000);
     </script>

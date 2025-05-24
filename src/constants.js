@@ -32,13 +32,13 @@ export const ClipTypes = {
  */
 export const States = {
   /** Waiting/idle state */
-  WAIT: 'wait',
+    WAITING: 'wait',
   /** Reacting to input state */
-  REACT: 'react',
+    REACTING: 'react',
   /** Typing response state */
-  TYPE: 'type',
+    TYPING: 'type',
   /** Sleep/inactive state */
-  SLEEP: 'sleep'
+    SLEEPING: 'sleep'
 }
 
 /**
