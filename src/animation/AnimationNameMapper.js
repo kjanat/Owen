@@ -1,0 +1,599 @@
+/**
+ * @fileoverview Multi-scheme animation name mapper for Owen Animation System
+ * @module animation/AnimationNameMapper
+ */
+
+/**
+ * Multi-scheme animation name mapper for Owen Animation System
+ * Supports legacy, artist-friendly, and hierarchical naming schemes
+ * @class
+ */
+export class AnimationNameMapper {
+  constructor () {
+    // Mapping between different naming schemes
+    this.schemeMappings = new Map()
+    this.reverseMappings = new Map()
+    this.patterns = new Map()
+
+    this.initializeMappings()
+  }
+
+  /**
+     * Initialize all naming scheme mappings and patterns
+     * @private
+     */
+  initializeMappings () {
+    // Core animation definitions with all naming scheme variants
+    const animations = [
+      // Wait state animations
+      {
+        legacy: 'wait_idle_L',
+        artist: 'Owen_WaitIdle',
+        hierarchical: 'owen.state.wait.idle.loop',
+        semantic: 'OwenWaitIdleLoop',
+        state: 'wait',
+        emotion: '',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'wait_pickNose_Q',
+        artist: 'Owen_PickNose',
+        hierarchical: 'owen.quirk.wait.picknose',
+        semantic: 'OwenQuirkPickNose',
+        state: 'wait',
+        emotion: '',
+        type: 'quirk',
+        category: 'quirk'
+      },
+      {
+        legacy: 'wait_wave_Q',
+        artist: 'Owen_Wave',
+        hierarchical: 'owen.quirk.wait.wave',
+        semantic: 'OwenQuirkWave',
+        state: 'wait',
+        emotion: '',
+        type: 'quirk',
+        category: 'quirk'
+      },
+      // React state animations
+      {
+        legacy: 'react_idle_L',
+        artist: 'Owen_ReactIdle',
+        hierarchical: 'owen.state.react.idle.loop',
+        semantic: 'OwenReactIdleLoop',
+        state: 'react',
+        emotion: '',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'react_an_L',
+        artist: 'Owen_ReactAngry',
+        hierarchical: 'owen.state.react.emotion.angry.loop',
+        semantic: 'OwenReactAngryLoop',
+        state: 'react',
+        emotion: 'angry',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'react_sh_L',
+        artist: 'Owen_ReactShocked',
+        hierarchical: 'owen.state.react.emotion.shocked.loop',
+        semantic: 'OwenReactShockedLoop',
+        state: 'react',
+        emotion: 'shocked',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'react_ha_L',
+        artist: 'Owen_ReactHappy',
+        hierarchical: 'owen.state.react.emotion.happy.loop',
+        semantic: 'OwenReactHappyLoop',
+        state: 'react',
+        emotion: 'happy',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'react_sa_L',
+        artist: 'Owen_ReactSad',
+        hierarchical: 'owen.state.react.emotion.sad.loop',
+        semantic: 'OwenReactSadLoop',
+        state: 'react',
+        emotion: 'sad',
+        type: 'loop',
+        category: 'state'
+      },
+      // Type state animations
+      {
+        legacy: 'type_idle_L',
+        artist: 'Owen_TypeIdle',
+        hierarchical: 'owen.state.type.idle.loop',
+        semantic: 'OwenTypeIdleLoop',
+        state: 'type',
+        emotion: '',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'type_an_L',
+        artist: 'Owen_TypeAngry',
+        hierarchical: 'owen.state.type.emotion.angry.loop',
+        semantic: 'OwenTypeAngryLoop',
+        state: 'type',
+        emotion: 'angry',
+        type: 'loop',
+        category: 'state'
+      },
+      {
+        legacy: 'type_sh_L',
+        artist: 'Owen_TypeShocked',
+        hierarchical: 'owen.state.type.emotion.shocked.loop',
+        semantic: 'OwenTypeShockedLoop',
+        state: 'type',
+        emotion: 'shocked',
+        type: 'loop',
+        category: 'state'
+      },
+      // Sleep state animations
+      {
+        legacy: 'sleep_idle_L',
+        artist: 'Owen_SleepIdle',
+        hierarchical: 'owen.state.sleep.idle.loop',
+        semantic: 'OwenSleepIdleLoop',
+        state: 'sleep',
+        emotion: '',
+        type: 'loop',
+        category: 'state'
+      },
+      // Transition animations
+      {
+        legacy: 'wait_2react_T',
+        artist: 'Owen_WaitToReact',
+        hierarchical: 'owen.transition.wait.to.react',
+        semantic: 'OwenTransitionWaitToReact',
+        fromState: 'wait',
+        toState: 'react',
+        emotion: '',
+        type: 'transition',
+        category: 'transition'
+      },
+      {
+        legacy: 'react_2type_T',
+        artist: 'Owen_ReactToType',
+        hierarchical: 'owen.transition.react.to.type',
+        semantic: 'OwenTransitionReactToType',
+        fromState: 'react',
+        toState: 'type',
+        emotion: '',
+        type: 'transition',
+        category: 'transition'
+      },
+      {
+        legacy: 'react_an2type_T',
+        artist: 'Owen_ReactAngryToType',
+        hierarchical: 'owen.transition.react.to.type.emotion.angry',
+        semantic: 'OwenTransitionReactToTypeAngry',
+        fromState: 'react',
+        toState: 'type',
+        emotion: 'angry',
+        type: 'transition',
+        category: 'transition'
+      },
+      {
+        legacy: 'type_2wait_T',
+        artist: 'Owen_TypeToWait',
+        hierarchical: 'owen.transition.type.to.wait',
+        semantic: 'OwenTransitionTypeToWait',
+        fromState: 'type',
+        toState: 'wait',
+        emotion: '',
+        type: 'transition',
+        category: 'transition'
+      },
+      {
+        legacy: 'sleep_2wait_T',
+        artist: 'Owen_SleepToWait',
+        hierarchical: 'owen.transition.sleep.to.wait',
+        semantic: 'OwenTransitionSleepToWait',
+        fromState: 'sleep',
+        toState: 'wait',
+        emotion: '',
+        type: 'transition',
+        category: 'transition'
+      }
+    ]
+
+    // Build bidirectional mappings
+    animations.forEach(anim => {
+      const schemes = ['legacy', 'artist', 'hierarchical', 'semantic']
+
+      schemes.forEach(scheme1 => {
+        schemes.forEach(scheme2 => {
+          if (scheme1 !== scheme2) {
+            this.schemeMappings.set(anim[scheme1], anim[scheme2])
+          }
+        })
+
+        // Also map to animation definition
+        this.schemeMappings.set(anim[scheme1], anim)
+      })
+    })
+
+    // Initialize pattern matchers for auto-detection
+    this.initializePatterns()
+  }
+
+  /**
+     * Initialize pattern matchers for different naming schemes
+     * @private
+     */
+  initializePatterns () {
+    // Pattern matchers for different naming schemes
+    this.patterns.set('legacy', [
+      {
+        regex: /^(\w+)_(\w+)_([LTQ])$/,
+        extract: (match) => ({
+          state: match[1],
+          action: match[2],
+          type: match[3] === 'L' ? 'loop' : match[3] === 'T' ? 'transition' : 'quirk'
+        })
+      },
+      {
+        regex: /^(\w+)_(\w{2})_([LTQ])$/,
+        extract: (match) => ({
+          state: match[1],
+          emotion: this.mapEmotionCode(match[2]),
+          type: match[3] === 'L' ? 'loop' : match[3] === 'T' ? 'transition' : 'quirk'
+        })
+      },
+      {
+        regex: /^(\w+)_(\w{2})?2(\w+)_T$/,
+        extract: (match) => ({
+          fromState: match[1],
+          emotion: match[2] ? this.mapEmotionCode(match[2]) : '',
+          toState: match[3],
+          type: 'transition'
+        })
+      },
+      {
+        regex: /^(\w+)_2(\w+)_T$/,
+        extract: (match) => ({
+          fromState: match[1],
+          toState: match[2],
+          type: 'transition'
+        })
+      }
+    ])
+
+    this.patterns.set('artist', [
+      {
+        regex: /^Owen_(\w+)$/,
+        extract: (match) => ({
+          action: match[1],
+          scheme: 'artist'
+        })
+      },
+      {
+        regex: /^Owen_(\w+)To(\w+)$/,
+        extract: (match) => ({
+          fromState: match[1].toLowerCase(),
+          toState: match[2].toLowerCase(),
+          type: 'transition'
+        })
+      },
+      {
+        regex: /^Owen_(\w+)(Angry|Happy|Sad|Shocked)$/,
+        extract: (match) => ({
+          state: match[1].toLowerCase(),
+          emotion: match[2].toLowerCase(),
+          type: 'loop'
+        })
+      },
+      {
+        regex: /^Owen_(\w+)(Angry|Happy|Sad|Shocked)To(\w+)$/,
+        extract: (match) => ({
+          fromState: match[1].toLowerCase(),
+          emotion: match[2].toLowerCase(),
+          toState: match[3].toLowerCase(),
+          type: 'transition'
+        })
+      }
+    ])
+
+    this.patterns.set('hierarchical', [
+      {
+        regex: /^owen\.(\w+)\.(\w+)\.(\w+)(?:\.(\w+))?(?:\.(\w+))?$/,
+        extract: (match) => ({
+          category: match[1],
+          subcategory: match[2],
+          action: match[3],
+          modifier: match[4],
+          type: match[5] || match[4]
+        })
+      }
+    ])
+
+    this.patterns.set('semantic', [
+      {
+        regex: /^Owen(\w+)(\w+)(\w+)$/,
+        extract: (match) => ({
+          category: match[1].toLowerCase(),
+          action: match[2].toLowerCase(),
+          type: match[3].toLowerCase()
+        })
+      }
+    ])
+  }
+
+  /**
+     * Map emotion codes to full names
+     * @private
+     * @param {string} code - Emotion code
+     * @returns {string} Full emotion name
+     */
+  mapEmotionCode (code) {
+    const emotionMap = {
+      an: 'angry',
+      sh: 'shocked',
+      ha: 'happy',
+      sa: 'sad',
+      '': 'neutral'
+    }
+    return emotionMap[code] || code
+  }
+
+  /**
+     * Convert any animation name to any other scheme
+     * @param {string} fromName - Source animation name
+     * @param {string} targetScheme - Target naming scheme ('legacy', 'artist', 'hierarchical', 'semantic')
+     * @returns {string} Converted animation name
+     */
+  convert (fromName, targetScheme = 'hierarchical') {
+    // Direct lookup first
+    const directMapping = this.schemeMappings.get(fromName)
+    if (directMapping && typeof directMapping === 'object') {
+      return directMapping[targetScheme] || fromName
+    }
+
+    // Pattern-based conversion
+    const detected = this.detectScheme(fromName)
+    if (detected) {
+      return this.generateName(detected.info, targetScheme)
+    }
+
+    console.warn(`Could not convert animation name: ${fromName}`)
+    return fromName
+  }
+
+  /**
+     * Detect which naming scheme is being used
+     * @param {string} name - Animation name to analyze
+     * @returns {Object|null} Detection result with scheme and extracted info
+     */
+  detectScheme (name) {
+    for (const [scheme, patterns] of this.patterns) {
+      for (const pattern of patterns) {
+        const match = name.match(pattern.regex)
+        if (match) {
+          return {
+            scheme,
+            info: pattern.extract(match),
+            originalName: name
+          }
+        }
+      }
+    }
+    return null
+  }
+
+  /**
+     * Generate animation name in target scheme
+     * @private
+     * @param {Object} info - Animation information
+     * @param {string} targetScheme - Target naming scheme
+     * @returns {string} Generated animation name
+     */
+  generateName (info, targetScheme) {
+    switch (targetScheme) {
+      case 'legacy':
+        return this.generateLegacyName(info)
+      case 'artist':
+        return this.generateArtistName(info)
+      case 'hierarchical':
+        return this.generateHierarchicalName(info)
+      case 'semantic':
+        return this.generateSemanticName(info)
+      default:
+        return null
+    }
+  }
+
+  /**
+     * Generate legacy format name
+     * @private
+     * @param {Object} info - Animation information
+     * @returns {string} Legacy format name
+     */
+  generateLegacyName (info) {
+    const typeMap = { loop: 'L', transition: 'T', quirk: 'Q' }
+    const emotionMap = { angry: 'an', shocked: 'sh', happy: 'ha', sad: 'sa' }
+
+    if (info.type === 'transition' && info.fromState && info.toState) {
+      const emotionPart = info.emotion ? emotionMap[info.emotion] || '' : ''
+      return emotionPart
+        ? `${info.fromState}_${emotionPart}2${info.toState}_T`
+        : `${info.fromState}_2${info.toState}_T`
+    }
+
+    const state = info.state || info.fromState || 'wait'
+    const action = info.action || (info.emotion ? emotionMap[info.emotion] : 'idle')
+    const type = typeMap[info.type] || 'L'
+
+    return `${state}_${action}_${type}`
+  }
+
+  /**
+     * Generate artist-friendly format name
+     * @private
+     * @param {Object} info - Animation information
+     * @returns {string} Artist format name
+     */
+  generateArtistName (info) {
+    const parts = ['Owen']
+
+    if (info.type === 'transition') {
+      const from = this.capitalize(info.fromState || info.state)
+      const to = this.capitalize(info.toState)
+      if (info.emotion) {
+        parts.push(`${from}${this.capitalize(info.emotion)}To${to}`)
+      } else {
+        parts.push(`${from}To${to}`)
+      }
+    } else {
+      if (info.state) parts.push(this.capitalize(info.state))
+      if (info.action && info.action !== 'idle') parts.push(this.capitalize(info.action))
+      if (info.emotion) parts.push(this.capitalize(info.emotion))
+    }
+
+    return parts.join('_')
+  }
+
+  /**
+     * Generate hierarchical format name
+     * @private
+     * @param {Object} info - Animation information
+     * @returns {string} Hierarchical format name
+     */
+  generateHierarchicalName (info) {
+    const parts = ['owen']
+
+    if (info.category) {
+      parts.push(info.category)
+    } else if (info.type === 'transition') {
+      parts.push('transition')
+    } else if (info.type === 'quirk') {
+      parts.push('quirk')
+    } else {
+      parts.push('state')
+    }
+
+    if (info.fromState && info.toState) {
+      // Transition
+      parts.push(info.fromState, 'to', info.toState)
+    } else if (info.state) {
+      parts.push(info.state)
+    }
+
+    if (info.action && info.action !== 'idle') parts.push(info.action)
+    if (info.emotion) parts.push('emotion', info.emotion)
+    if (info.type) parts.push(info.type)
+
+    return parts.join('.')
+  }
+
+  /**
+     * Generate semantic format name
+     * @private
+     * @param {Object} info - Animation information
+     * @returns {string} Semantic format name
+     */
+  generateSemanticName (info) {
+    const parts = ['Owen']
+
+    if (info.type === 'transition') {
+      parts.push('Transition')
+      if (info.fromState) parts.push(this.capitalize(info.fromState))
+      parts.push('To')
+      if (info.toState) parts.push(this.capitalize(info.toState))
+      if (info.emotion) parts.push(this.capitalize(info.emotion))
+    } else {
+      if (info.type === 'quirk') parts.push('Quirk')
+      if (info.state) parts.push(this.capitalize(info.state))
+      if (info.action && info.action !== 'idle') parts.push(this.capitalize(info.action))
+      if (info.emotion) parts.push(this.capitalize(info.emotion))
+      if (info.type && info.type !== 'quirk') parts.push(this.capitalize(info.type))
+    }
+
+    return parts.join('')
+  }
+
+  /**
+     * Capitalize first letter of string
+     * @private
+     * @param {string} str - String to capitalize
+     * @returns {string} Capitalized string
+     */
+  capitalize (str) {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+  }
+
+  /**
+     * Get all possible names for an animation
+     * @param {string} animationName - Source animation name
+     * @returns {Object} Object with all naming scheme variants
+     */
+  getAllNames (animationName) {
+    const schemes = ['legacy', 'artist', 'hierarchical', 'semantic']
+    const names = {}
+
+    schemes.forEach(scheme => {
+      names[scheme] = this.convert(animationName, scheme)
+    })
+
+    return names
+  }
+
+  /**
+     * Batch convert multiple animations
+     * @param {string[]} animations - Array of animation names
+     * @param {string} targetScheme - Target naming scheme
+     * @returns {Object} Mapping of original names to converted names
+     */
+  convertBatch (animations, targetScheme) {
+    const converted = {}
+    animations.forEach(name => {
+      converted[name] = this.convert(name, targetScheme)
+    })
+    return converted
+  }
+
+  /**
+     * Validate animation name format
+     * @param {string} name - Animation name to validate
+     * @returns {Object} Validation result with issues and suggestions
+     */
+  validateAnimationName (name) {
+    const issues = []
+    const suggestions = []
+
+    // Check for common issues
+    if (name.includes(' ')) {
+      issues.push(`❌ "${name}" contains spaces - may cause issues`)
+      suggestions.push(`💡 Suggestion: "${name.replace(/ /g, '_')}"`)
+    }
+
+    if (!/^[a-zA-Z0-9._-]+$/.test(name)) {
+      issues.push(`❌ "${name}" contains invalid characters`)
+      suggestions.push('💡 Use only letters, numbers, dots, underscores, and hyphens')
+    }
+
+    if (name.length > 50) {
+      issues.push(`⚠️ "${name}" is very long (${name.length} chars)`)
+      suggestions.push('💡 Consider shortening the name')
+    }
+
+    const detected = this.detectScheme(name)
+    if (!detected) {
+      issues.push(`⚠️ "${name}" doesn't match any known naming pattern`)
+      suggestions.push('💡 Consider using one of: legacy, artist, hierarchical, or semantic format')
+    } else {
+      suggestions.push(`✅ Detected as ${detected.scheme} scheme`)
+    }
+
+    return { issues, suggestions, detected }
+  }
+}

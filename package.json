@@ -1,51 +1,65 @@
 {
-  "name": "@kjanat/owen",
-  "version": "1.0.1",
-  "description": "A comprehensive Three.js animation system for character state management with clean architecture principles",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "dev:host": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "standard",
-    "lint:fix": "standard --fix",
-    "docs": "jsdoc -c jsdoc.config.json",
-    "format": "npx prettier --ignore-path --write '**/*.{html,css}' 'docs/**/*.{html,css}'"
-  },
-  "keywords": [
-    "three.js",
-    "animation",
-    "state-machine",
-    "character",
-    "gltf",
-    "3d"
-  ],
-  "author": "Kaj \"@kjanat\" Kowalski",
-  "license": "AGPL-3.0-only OR LicenseRef-Commercial",
-  "dependencies": {
-    "three": "^0.176.0"
-  },
-  "devDependencies": {
-    "jsdoc": "^4.0.2",
-    "pre-commit": "^1.2.2",
-    "standard": "*",
-    "vite": "^6.3.5"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "standard": {
-    "globals": [
-      "requestAnimationFrame"
+    "name": "@kjanat/owen",
+    "version": "1.0.2",
+    "description": "A comprehensive Three.js animation system for character state management with clean architecture principles",
+    "main": "src/index.js",
+    "types": "src/index.d.ts",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "dev:host": "vite --host",
+        "build": "vite build",
+        "build:demo": "vite build --config vite.demo.config.js",
+        "preview": "vite preview",
+        "lint": "standard",
+        "lint:fix": "standard --fix",
+        "docs": "jsdoc -c jsdoc.config.json",
+        "format": "npx prettier --ignore-path --write '**/*.{html,css}' 'docs/**/*.{html,css}'",
+        "validate:animations": "node scripts/validate-animations.js",
+        "generate:constants": "node scripts/generate-animation-constants.js",
+        "check:conflicts": "node scripts/check-naming-conflicts.js",
+        "test:schemes": "node scripts/test-multi-schemes.js",
+        "animation:validate": "npm run validate:animations && npm run check:conflicts",
+        "animation:generate": "npm run generate:constants && npm run validate:animations",
+        "preview:demo": "vite preview --config vite.demo.config.js --port 3000",
+        "test": "npx playwright test",
+        "test:demo": "npx playwright test tests/demo.spec.js",
+        "test:pages": "npx playwright test tests/pages.spec.js",
+        "test:ui": "npx playwright test --ui",
+        "test:headed": "npx playwright test --headed"
+    },
+    "keywords": [
+        "three.js",
+        "animation",
+        "state-machine",
+        "character",
+        "gltf",
+        "3d"
+    ],
+    "author": "Kaj \"@kjanat\" Kowalski",
+    "license": "AGPL-3.0-only OR LicenseRef-Commercial",
+    "dependencies": {
+        "three": "^0.176.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.52.0",
+        "jsdoc": "^4.0.2",
+        "pre-commit": "^1.2.2",
+        "standard": "*",
+        "vite": "^6.3.5"
+    },
+    "engines": {
+        "node": ">=16.0.0"
+    },
+    "standard": {
+        "globals": [
+            "requestAnimationFrame"
+        ]
+    },
+    "pre-commit": [
+        "lint:fix",
+        "lint",
+        "docs",
+        "format"
     ]
-  },
-  "pre-commit": [
-    "lint:fix",
-    "lint",
-    "docs",
-    "format"
-  ]
 }

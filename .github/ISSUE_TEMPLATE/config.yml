@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Discussion Forum
+    url: https://github.com/kjanat/Owen/discussions
+    about: Ask questions, share ideas, and discuss the Owen Animation System with the community
+  - name: Discord Community
+    url: https://discord.gg/owen-animation
+    about: Join our Discord server for real-time chat and support
+  - name: Documentation
+    url: https://kjanat.github.io/Owen/
+    about: Check our comprehensive documentation and guides
+  - name: Multi-Scheme Guide
+    url: https://github.com/kjanat/Owen/blob/main/MULTI_SCHEME_GUIDE.md
+    about: Learn about animation naming schemes and conversions
+  - name: Demo Application
+    url: https://kjanat.github.io/Owen/demo/
+    about: Try the interactive demo to understand the system capabilities

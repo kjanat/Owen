@@ -1,0 +1,139 @@
+name: Documentation Issue
+description: Report an issue with documentation or suggest improvements
+title: "[Docs]: "
+labels: ["documentation", "needs-review"]
+projects: ["kjanat/Owen"]
+assignees:
+  - kjanat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve our documentation! Please provide details about the documentation issue or improvement.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: What type of documentation is affected?
+      options:
+        - API Documentation (JSDoc)
+        - README.md
+        - Multi-Scheme Guide
+        - Code Examples
+        - Demo Application
+        - Installation Guide
+        - Integration Guide
+        - Changelog
+        - Contributing Guide
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What type of documentation issue is this?
+      options:
+        - Error/Mistake
+        - Missing Information
+        - Unclear/Confusing
+        - Outdated Information
+        - Missing Examples
+        - Formatting Issues
+        - Typo/Grammar
+        - Improvement Suggestion
+        - New Documentation Needed
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where did you find this issue? Provide a link or file path if possible.
+      placeholder: |
+        - URL: https://example.com/docs/...
+        - File: README.md (line 45)
+        - Section: "Animation Name Mapping"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-content
+    attributes:
+      label: Current Content
+      description: What is the current documentation content that needs improvement?
+      placeholder: Copy the current text or describe what's missing
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-improvement
+    attributes:
+      label: Suggested Improvement
+      description: How should the documentation be improved?
+      placeholder: |
+        - What should be added, changed, or removed?
+        - Provide suggested text if applicable
+        - Include code examples if relevant
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any additional context about why this improvement is needed
+      placeholder: |
+        - What task were you trying to accomplish?
+        - What confused you?
+        - How would this help other users?
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: Code Example
+      description: If suggesting code documentation improvements, provide examples
+      render: javascript
+      placeholder: |
+        ```javascript
+        // Current example (if exists)
+
+        // Suggested improved example
+        ```
+
+  - type: checkboxes
+    id: affected-users
+    attributes:
+      label: Who would benefit from this improvement?
+      options:
+        - label: New users learning the system
+        - label: Experienced developers integrating the system
+        - label: Contributors to the project
+        - label: Users of specific naming schemes
+        - label: Blender integration users
+        - label: React/Vue integration users
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have checked that this documentation issue hasn't been reported already
+          required: true
+        - label: I have provided specific location information
+          required: true
+        - label: I have suggested concrete improvements
+          required: true

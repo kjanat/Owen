@@ -1,0 +1,163 @@
+name: Animation Scheme Issue
+description: Report issues specific to animation naming schemes or conversions
+title: "[Scheme]: "
+labels: ["animation-scheme", "naming", "needs-investigation"]
+projects: ["kjanat/Owen"]
+assignees:
+  - kjanat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Report issues specific to animation naming schemes, conversions, or multi-scheme functionality.
+
+  - type: checkboxes
+    id: affected-schemes
+    attributes:
+      label: Affected Animation Schemes
+      description: Which naming schemes are affected by this issue?
+      options:
+        - label: Legacy scheme
+        - label: Artist scheme
+        - label: Hierarchical scheme
+        - label: Semantic scheme
+        - label: Multi-scheme conversion
+        - label: All schemes
+
+  - type: dropdown
+    id: issue-category
+    attributes:
+      label: Issue Category
+      description: What category best describes this issue?
+      options:
+        - Name Conversion Error
+        - Scheme Validation Failure
+        - Conflict Detection Issue
+        - Performance Problem
+        - Missing Animation Names
+        - Incorrect Mapping
+        - Blender Integration
+        - Documentation Mismatch
+        - API Inconsistency
+    validations:
+      required: true
+
+  - type: textarea
+    id: animation-names
+    attributes:
+      label: Animation Names Involved
+      description: Provide the specific animation names that are causing issues
+      placeholder: |
+        Source scheme: artist
+        Animation name: "char_walk_01"
+
+        Target scheme: semantic
+        Expected result: "character.movement.walk.forward"
+        Actual result: "character.walk.01"
+    validations:
+      required: true
+
+  - type: textarea
+    id: conversion-details
+    attributes:
+      label: Conversion Details
+      description: Provide details about the conversion or mapping issue
+      placeholder: |
+        - What conversion were you attempting?
+        - What was the expected behavior?
+        - What actually happened?
+        - Are there error messages?
+
+  - type: textarea
+    id: reproduction-code
+    attributes:
+      label: Reproduction Code
+      description: Provide code to reproduce the issue
+      render: javascript
+      placeholder: |
+        ```javascript
+        import { AnimationNameMapper } from 'owen-animation-system';
+
+        const mapper = new AnimationNameMapper();
+
+        // Code that reproduces the issue
+        const result = mapper.convert('char_walk_01', 'artist', 'semantic');
+        console.log(result); // Shows unexpected result
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation-output
+    attributes:
+      label: Validation Output
+      description: If you ran validation scripts, provide the output
+      render: shell
+      placeholder: |
+        $ npm run check:naming-conflicts
+
+        # Output from validation scripts
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this issue?
+      options:
+        - Low - Minor inconvenience
+        - Medium - Affects workflow but has workarounds
+        - High - Breaks functionality significantly
+        - Critical - Prevents system usage
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment-details
+    attributes:
+      label: Environment Details
+      description: Provide environment information
+      placeholder: |
+        - Owen Animation System version: v1.2.3
+        - Node.js version: v18.17.0
+        - Animation assets source: Blender 3.6
+        - Integration: React/Vue/Vanilla JS
+        - OS: Windows/macOS/Linux
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current Workaround
+      description: If you found a workaround, please describe it
+      placeholder: Describe any temporary solutions you're using
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact Assessment
+      options:
+        - label: Affects multiple animation assets
+        - label: Blocks automated processing
+        - label: Requires manual intervention
+        - label: Affects production builds
+        - label: Impacts team workflow
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission checklist
+      options:
+        - label: I have provided specific animation names and schemes
+          required: true
+        - label: I have included reproduction code
+          required: true
+        - label: I have checked existing issues for similar problems
+          required: true

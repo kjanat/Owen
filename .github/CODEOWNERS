@@ -1,0 +1,38 @@
+# Code owners for the Owen Animation System
+# These users will be automatically requested for review when PRs are opened
+
+# Global ownership - project maintainer
+* @kjanat
+
+# Core animation system
+/src/animation/ @kjanat
+/src/core/OwenAnimationContext.js @kjanat
+
+# Animation processing and validation scripts
+/scripts/ @kjanat
+
+# Configuration files
+/package.json @kjanat
+/vite*.config.js @kjanat
+/jsdoc.config.json @kjanat
+
+# GitHub workflows and automation
+/.github/ @kjanat
+
+# Documentation
+/docs/ @kjanat
+/README.md @kjanat
+/CHANGELOG.md @kjanat
+/MULTI_SCHEME_GUIDE.md @kjanat
+
+# Demo application
+/demo/ @kjanat
+
+# Examples and integration guides
+/examples/ @kjanat
+
+# License files - require special attention
+/LICENSE.* @kjanat
+
+# Animation assets - require validation
+/assets/animations/ @kjanat

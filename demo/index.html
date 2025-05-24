@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Owen Animation System - Interactive Demo</title>
+    <meta
+      name="description"
+      content="Interactive demonstration of the Owen Animation System with multi-scheme naming support"
+    />
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="./styles/main.css" as="style" />
+    <link rel="preload" href="./js/demo.js" as="script" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/demo.css" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="demo-header">
+      <div class="container">
+        <h1 class="logo">
+          <span class="logo-text">Owen</span>
+          <span class="logo-subtitle">Animation System</span>
+        </h1>
+        <nav class="demo-nav">
+          <a href="index.html" class="nav-link active">Demo</a>
+          <a href="examples.html" class="nav-link">Examples</a>
+          <a href="comparison.html" class="nav-link">Comparison</a>
+          <a href="interactive.html" class="nav-link">Interactive</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="demo-main">
+      <div class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+          <div class="hero-content">
+            <h2>Multi-Scheme Animation Naming</h2>
+            <p>
+              Experience the power of flexible animation naming with support for
+              Legacy, Artist, Hierarchical, and Semantic schemes.
+            </p>
+
+            <div class="hero-actions">
+              <button id="start-demo" class="btn btn-primary">
+                Start Interactive Demo
+              </button>
+              <a href="https://github.com/kjanat/Owen" class="btn btn-secondary"
+                >View on GitHub</a
+              >
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <canvas id="demo-canvas" width="600" height="400"></canvas>
+            <div class="demo-controls">
+              <div class="control-group">
+                <label for="naming-scheme">Naming Scheme:</label>
+                <select id="naming-scheme">
+                  <option value="semantic">Semantic (default)</option>
+                  <option value="hierarchical">Hierarchical</option>
+                  <option value="artist">Artist</option>
+                  <option value="legacy">Legacy</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label for="animation-select">Animation:</label>
+                <select id="animation-select">
+                  <option value="">Select an animation...</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <button id="play-animation" class="btn btn-small" disabled>
+                  Play
+                </button>
+                <button id="pause-animation" class="btn btn-small" disabled>
+                  Pause
+                </button>
+                <button id="stop-animation" class="btn btn-small" disabled>
+                  Stop
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+          <h3>Key Features</h3>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">🎯</div>
+              <h4>Multi-Scheme Support</h4>
+              <p>
+                Seamlessly work with Legacy, Artist, Hierarchical, and Semantic
+                naming schemes in the same project.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">🔄</div>
+              <h4>Automatic Conversion</h4>
+              <p>
+                Convert animation names between schemes automatically with
+                built-in validation and error handling.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">⚡</div>
+              <h4>Performance Optimized</h4>
+              <p>
+                Efficient caching and lazy loading ensure smooth performance
+                even with large animation libraries.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">🛠️</div>
+              <h4>Developer Tools</h4>
+              <p>
+                Comprehensive CLI tools, validation scripts, and documentation
+                generators for streamlined workflows.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Live Demo Section -->
+        <section class="live-demo-section">
+          <h3>Live Animation Conversion</h3>
+          <div class="conversion-demo">
+            <div class="input-section">
+              <label for="input-animation">Enter Animation Name:</label>
+              <input
+                type="text"
+                id="input-animation"
+                placeholder="e.g., character_walk_forward"
+              />
+
+              <label for="input-scheme">Current Scheme:</label>
+              <select id="input-scheme">
+                <option value="semantic">Semantic</option>
+                <option value="hierarchical">Hierarchical</option>
+                <option value="artist">Artist</option>
+                <option value="legacy">Legacy</option>
+              </select>
+            </div>
+
+            <div class="conversion-results">
+              <h4>Converted Names:</h4>
+              <div class="scheme-results">
+                <div class="scheme-result">
+                  <strong>Legacy:</strong> <span id="result-legacy">-</span>
+                </div>
+                <div class="scheme-result">
+                  <strong>Artist:</strong> <span id="result-artist">-</span>
+                </div>
+                <div class="scheme-result">
+                  <strong>Hierarchical:</strong>
+                  <span id="result-hierarchical">-</span>
+                </div>
+                <div class="scheme-result">
+                  <strong>Semantic:</strong> <span id="result-semantic">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Code Examples Section -->
+        <section class="code-examples-section">
+          <h3>Usage Examples</h3>
+          <div class="code-tabs">
+            <button class="tab-button active" data-tab="basic">
+              Basic Usage
+            </button>
+            <button class="tab-button" data-tab="conversion">
+              Name Conversion
+            </button>
+            <button class="tab-button" data-tab="validation">Validation</button>
+          </div>
+
+          <div class="tab-content">
+            <div id="basic-tab" class="tab-pane active">
+              <pre><code class="javascript">import { OwenAnimationContext } from '@kjanat/owen'
+
+// Initialize with semantic naming scheme
+const animationContext = new OwenAnimationContext({
+  namingScheme: 'semantic',
+  autoConvert: true
+})
+
+// Play an animation
+await animationContext.playAnimation('character_walk_forward')
+
+// The system automatically handles scheme conversions
+await animationContext.playAnimation('CharacterWalkForward') // Artist scheme</code></pre>
+            </div>
+
+            <div id="conversion-tab" class="tab-pane">
+              <pre><code class="javascript">import { AnimationNameMapper } from '@kjanat/owen'
+
+const mapper = new AnimationNameMapper()
+
+// Convert between schemes
+const semanticName = mapper.convert('CharacterWalkForward', 'semantic')
+// Result: 'character_walk_forward'
+
+const hierarchicalName = mapper.convert('walk_forward', 'hierarchical')
+// Result: 'character.movement.walk.forward'
+
+// Batch conversion
+const animations = ['jump', 'run', 'idle']
+const converted = mapper.convertBatch(animations, 'legacy', 'artist')
+// Result: ['Jump', 'Run', 'Idle']</code></pre>
+            </div>
+
+            <div id="validation-tab" class="tab-pane">
+              <pre><code class="javascript">import { AnimationValidator } from '@kjanat/owen'
+
+const validator = new AnimationValidator()
+
+// Validate animation name for specific scheme
+const isValid = validator.validate('character_walk_forward', 'semantic')
+// Result: true
+
+// Get validation details
+const validation = validator.validateDetailed('InvalidName123', 'semantic')
+console.log(validation.errors) // Array of validation errors
+console.log(validation.suggestions) // Suggested corrections</code></pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="demo-footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h4>Owen Animation System</h4>
+            <p>
+              A comprehensive Three.js animation system with multi-scheme naming
+              support.
+            </p>
+          </div>
+
+          <div class="footer-section">
+            <h4>Documentation</h4>
+            <ul>
+              <li>
+                <a href="../docs/ANIMATION_SYSTEM.md">Animation System Guide</a>
+              </li>
+              <li><a href="../docs/API_REFERENCE.md">API Reference</a></li>
+              <li><a href="../docs/MIGRATION_GUIDE.md">Migration Guide</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Examples</h4>
+            <ul>
+              <li><a href="../examples/basic/README.md">Basic Usage</a></li>
+              <li>
+                <a href="../examples/react/README.md">React Integration</a>
+              </li>
+              <li><a href="../examples/vue/README.md">Vue Integration</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h4>Links</h4>
+            <ul>
+              <li>
+                <a href="https://github.com/kjanat/Owen">GitHub Repository</a>
+              </li>
+              <li>
+                <a href="https://gitea.kajkowalski.nl/kjanat/Owen"
+                  >Gitea Repository</a
+                >
+              </li>
+              <li><a href="https://semver.org/">Semantic Versioning</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            &copy; 2024 Kaj "kjanat" Kowalski. Licensed under AGPL-3.0-only OR
+            LicenseRef-Commercial.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="./js/demo.js"></script>
+    <script type="module" src="./js/animation-demo.js"></script>
+  </body>
+</html>

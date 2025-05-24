@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examples - Owen Animation System</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/examples.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <div class="container">
+        <h1 class="logo">
+          <span class="logo-text">Owen</span>
+          <span class="logo-subtitle">Examples</span>
+        </h1>
+        <nav class="demo-nav">
+          <a href="index.html" class="nav-link">Demo</a>
+          <a href="examples.html" class="nav-link active">Examples</a>
+          <a href="comparison.html" class="nav-link">Comparison</a>
+          <a href="interactive.html" class="nav-link">Interactive</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="examples-main">
+      <div class="container">
+        <section class="examples-hero">
+          <h2>Code Examples & Integration Patterns</h2>
+          <p>
+            Explore practical examples of using the Owen Animation System in
+            different frameworks and scenarios.
+          </p>
+        </section>
+
+        <section class="examples-grid">
+          <div class="example-category">
+            <h3>Framework Integration</h3>
+            <div class="example-cards">
+              <div class="example-card">
+                <h4>React Integration</h4>
+                <p>Complete React component with animation state management</p>
+                <a href="#react-example" class="example-link">View Example</a>
+              </div>
+              <div class="example-card">
+                <h4>Vue Integration</h4>
+                <p>Vue 3 composition API with reactive animation controls</p>
+                <a href="#vue-example" class="example-link">View Example</a>
+              </div>
+              <div class="example-card">
+                <h4>Node.js Server</h4>
+                <p>Server-side animation processing and validation</p>
+                <a href="#nodejs-example" class="example-link">View Example</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="example-category">
+            <h3>Multi-Scheme Usage</h3>
+            <div class="example-cards">
+              <div class="example-card">
+                <h4>Scheme Conversion</h4>
+                <p>Converting animations between different naming schemes</p>
+                <a href="#conversion-example" class="example-link"
+                  >View Example</a
+                >
+              </div>
+              <div class="example-card">
+                <h4>Batch Processing</h4>
+                <p>Processing multiple animations with automated conversion</p>
+                <a href="#batch-example" class="example-link">View Example</a>
+              </div>
+              <div class="example-card">
+                <h4>Validation Pipeline</h4>
+                <p>Complete validation workflow with error handling</p>
+                <a href="#validation-example" class="example-link"
+                  >View Example</a
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="example-category">
+            <h3>Advanced Features</h3>
+            <div class="example-cards">
+              <div class="example-card">
+                <h4>Custom Schemes</h4>
+                <p>Creating and registering custom naming schemes</p>
+                <a href="#custom-example" class="example-link">View Example</a>
+              </div>
+              <div class="example-card">
+                <h4>Performance Optimization</h4>
+                <p>Optimizing animation loading and caching strategies</p>
+                <a href="#performance-example" class="example-link"
+                  >View Example</a
+                >
+              </div>
+              <div class="example-card">
+                <h4>Testing Integration</h4>
+                <p>Unit and integration testing for animation systems</p>
+                <a href="#testing-example" class="example-link">View Example</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Detailed Examples -->
+        <section class="detailed-examples">
+          <div id="react-example" class="example-detail">
+            <h3>React Integration Example</h3>
+            <pre><code class="javascript">import React, { useEffect, useRef, useState } from 'react'
+import { OwenAnimationContext } from '@kjanat/owen'
+
+export function AnimatedCharacter({ characterModel, namingScheme = 'semantic' }) {
+  const containerRef = useRef()
+  const [animationContext, setAnimationContext] = useState(null)
+  const [currentAnimation, setCurrentAnimation] = useState('idle')
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  useEffect(() => {
+    // Initialize Owen Animation Context
+    const context = new OwenAnimationContext({
+      namingScheme,
+      autoConvert: true,
+      container: containerRef.current
+    })
+
+    context.loadModel(characterModel).then(() => {
+      setAnimationContext(context)
+    })
+
+    return () => context?.dispose()
+  }, [characterModel, namingScheme])
+
+  const playAnimation = async (animationName) => {
+    if (!animationContext) return
+
+    try {
+      await animationContext.playAnimation(animationName)
+      setCurrentAnimation(animationName)
+      setIsPlaying(true)
+    } catch (error) {
+      console.error('Failed to play animation:', error)
+    }
+  }
+
+  const stopAnimation = () => {
+    animationContext?.stopAnimation()
+    setIsPlaying(false)
+  }
+
+  return (
+    &lt;div className="animated-character"&gt;
+      &lt;div ref={containerRef} className="character-viewport" /&gt;
+
+      &lt;div className="animation-controls"&gt;
+        &lt;button onClick={() => playAnimation('walk_forward')}&gt;
+          Walk
+        &lt;/button&gt;
+        &lt;button onClick={() => playAnimation('character_run')}&gt;
+          Run
+        &lt;/button&gt;
+        &lt;button onClick={() => playAnimation('jump_high')}&gt;
+          Jump
+        &lt;/button&gt;
+        &lt;button onClick={stopAnimation}&gt;
+          Stop
+        &lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;div className="animation-info"&gt;
+        &lt;p&gt;Current: {currentAnimation}&lt;/p&gt;
+        &lt;p&gt;Status: {isPlaying ? 'Playing' : 'Stopped'}&lt;/p&gt;
+        &lt;p&gt;Scheme: {namingScheme}&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+          </div>
+
+          <div id="conversion-example" class="example-detail">
+            <h3>Animation Name Conversion</h3>
+            <pre><code class="javascript">import { AnimationNameMapper } from '@kjanat/owen'
+
+// Initialize the mapper
+const mapper = new AnimationNameMapper()
+
+// Single animation conversion
+function convertAnimation(animationName, fromScheme, toScheme) {
+  try {
+    const converted = mapper.convert(animationName, toScheme, fromScheme)
+    console.log(`${fromScheme}: ${animationName} → ${toScheme}: ${converted}`)
+    return converted
+  } catch (error) {
+    console.error('Conversion failed:', error.message)
+    return null
+  }
+}
+
+// Batch conversion with validation
+function convertAnimationBatch(animations, fromScheme, toScheme) {
+  const results = {
+    successful: [],
+    failed: [],
+    conflicts: []
+  }
+
+  animations.forEach(anim => {
+    try {
+      const converted = mapper.convert(anim, toScheme, fromScheme)
+
+      // Check for conflicts
+      if (results.successful.includes(converted)) {
+        results.conflicts.push({
+          original: anim,
+          converted,
+          conflict: 'Duplicate target name'
+        })
+      } else {
+        results.successful.push({
+          original: anim,
+          converted,
+          schemes: { from: fromScheme, to: toScheme }
+        })
+      }
+    } catch (error) {
+      results.failed.push({
+        original: anim,
+        error: error.message,
+        suggestions: mapper.suggestCorrections(anim, fromScheme)
+      })
+    }
+  })
+
+  return results
+}
+
+// Example usage
+const legacyAnimations = [
+  'walk_forward', 'run_fast', 'jump_high',
+  'attack_sword', 'defend_shield', 'idle_breathing'
+]
+
+const conversionResults = convertAnimationBatch(
+  legacyAnimations,
+  'legacy',
+  'semantic'
+)
+
+console.log('Conversion Results:', conversionResults)</code></pre>
+          </div>
+
+          <div id="batch-example" class="example-detail">
+            <h3>Batch Processing Pipeline</h3>
+            <pre><code class="javascript">import { AnimationProcessor } from '@kjanat/owen'
+import fs from 'fs/promises'
+import path from 'path'
+
+class AnimationBatchProcessor {
+  constructor(options = {}) {
+    this.processor = new AnimationProcessor(options)
+    this.inputDir = options.inputDir || './assets/raw'
+    this.outputDir = options.outputDir || './assets/processed'
+    this.targetScheme = options.targetScheme || 'semantic'
+  }
+
+  async processDirectory() {
+    console.log('Starting batch animation processing...')
+
+    try {
+      // Scan input directory
+      const files = await this.scanAnimationFiles()
+      console.log(`Found ${files.length} animation files`)
+
+      // Process each file
+      const results = await Promise.allSettled(
+        files.map(file => this.processFile(file))
+      )
+
+      // Generate summary report
+      const summary = this.generateSummary(results)
+      await this.saveReport(summary)
+
+      return summary
+    } catch (error) {
+      console.error('Batch processing failed:', error)
+      throw error
+    }
+  }
+
+  async scanAnimationFiles() {
+    const files = []
+    const entries = await fs.readdir(this.inputDir, { withFileTypes: true })
+
+    for (const entry of entries) {
+      if (entry.isFile() && /\.(gltf|glb|fbx)$/i.test(entry.name)) {
+        files.push(path.join(this.inputDir, entry.name))
+      }
+    }
+
+    return files
+  }
+
+  async processFile(inputFile) {
+    const filename = path.basename(inputFile)
+    console.log(`Processing: ${filename}`)
+
+    try {
+      // Load and analyze animation
+      const animation = await this.processor.loadAnimation(inputFile)
+
+      // Convert naming scheme
+      const convertedName = this.processor.convertName(
+        animation.name,
+        this.targetScheme
+      )
+
+      // Apply optimizations
+      const optimized = await this.processor.optimize(animation)
+
+      // Save processed animation
+      const outputFile = path.join(this.outputDir, `${convertedName}.gltf`)
+      await this.processor.saveAnimation(optimized, outputFile)
+
+      return {
+        status: 'success',
+        inputFile,
+        outputFile,
+        originalName: animation.name,
+        convertedName,
+        size: optimized.size,
+        duration: optimized.duration
+      }
+    } catch (error) {
+      return {
+        status: 'error',
+        inputFile,
+        error: error.message
+      }
+    }
+  }
+
+  generateSummary(results) {
+    const successful = results.filter(r => r.value?.status === 'success')
+    const failed = results.filter(r => r.status === 'rejected' || r.value?.status === 'error')
+
+    return {
+      timestamp: new Date().toISOString(),
+      total: results.length,
+      successful: successful.length,
+      failed: failed.length,
+      successRate: (successful.length / results.length * 100).toFixed(2),
+      details: {
+        successful: successful.map(r => r.value),
+        failed: failed.map(r => ({
+          file: r.value?.inputFile || 'unknown',
+          error: r.value?.error || r.reason
+        }))
+      }
+    }
+  }
+
+  async saveReport(summary) {
+    const reportPath = path.join(this.outputDir, 'processing-report.json')
+    await fs.mkdir(path.dirname(reportPath), { recursive: true })
+    await fs.writeFile(reportPath, JSON.stringify(summary, null, 2))
+    console.log(`Report saved: ${reportPath}`)
+  }
+}
+
+// Usage
+const processor = new AnimationBatchProcessor({
+  inputDir: './assets/blender-exports',
+  outputDir: './assets/animations',
+  targetScheme: 'semantic'
+})
+
+processor.processDirectory().then(summary => {
+  console.log('Processing complete:', summary)
+}).catch(error => {
+  console.error('Processing failed:', error)
+  process.exit(1)
+})</code></pre>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="demo-footer">
+      <div class="container">
+        <p>
+          &copy; 2024 Owen Animation System. All examples are MIT licensed for
+          educational use.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module" src="./js/examples.js"></script>
+  </body>
+</html>

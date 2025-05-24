@@ -1,0 +1,569 @@
+name: Performance Testing
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'src/animation/**'
+      - 'demo/**'
+      - 'scripts/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'src/animation/**'
+      - 'demo/**'
+      - 'scripts/**'
+  schedule:
+    # Run performance tests weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of performance test to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - conversion
+          - validation
+          - memory
+          - lighthouse
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  conversion-performance:
+    name: Animation Conversion Performance
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'conversion' || github.event.inputs.test_type == null
+
+    strategy:
+      matrix:
+        scheme: [legacy, artist, hierarchical, semantic]
+        batch_size: [100, 1000, 5000]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Generate test data
+      run: |
+        node -e "
+        const fs = require('fs');
+        const testData = [];
+        const schemes = ['legacy', 'artist', 'hierarchical', 'semantic'];
+        const baseNames = [
+          'walk', 'run', 'idle', 'jump', 'attack', 'defend', 'crouch', 'climb',
+          'swim', 'fly', 'dance', 'wave', 'bow', 'kneel', 'sit', 'stand'
+        ];
+
+        for (let i = 0; i < ${{ matrix.batch_size }}; i++) {
+          const baseName = baseNames[i % baseNames.length];
+          const variant = String(i + 1).padStart(2, '0');
+
+          let animationName;
+          switch ('${{ matrix.scheme }}') {
+            case 'legacy':
+              animationName = \`\${baseName}_\${variant}\`;
+              break;
+            case 'artist':
+              animationName = \`char_\${baseName}_\${variant}\`;
+              break;
+            case 'hierarchical':
+              animationName = \`character/movement/\${baseName}/\${variant}\`;
+              break;
+            case 'semantic':
+              animationName = \`character.movement.\${baseName}.forward\`;
+              break;
+          }
+
+          testData.push({
+            name: animationName,
+            sourceScheme: '${{ matrix.scheme }}',
+            targetScheme: schemes.filter(s => s !== '${{ matrix.scheme }}')[Math.floor(Math.random() * 3)]
+          });
+        }
+
+        fs.writeFileSync('test-data.json', JSON.stringify(testData, null, 2));
+        console.log(\`Generated \${testData.length} test cases for ${{ matrix.scheme }} scheme\`);
+        "
+
+    - name: Run conversion performance test
+      run: |
+        node -e "
+        const fs = require('fs');
+        const { AnimationNameMapper } = require('./src/animation/AnimationNameMapper.js');
+        const testData = JSON.parse(fs.readFileSync('test-data.json', 'utf8'));
+
+        const mapper = new AnimationNameMapper();
+        const results = {
+          scheme: '${{ matrix.scheme }}',
+          batchSize: ${{ matrix.batch_size }},
+          totalConversions: testData.length,
+          startTime: Date.now(),
+          conversions: [],
+          errors: []
+        };
+
+        console.log(\`Starting performance test: ${{ matrix.scheme }} scheme, \${testData.length} conversions\`);
+
+        for (const testCase of testData) {
+          const startTime = process.hrtime.bigint();
+
+          try {
+            const result = mapper.convert(
+              testCase.name,
+              testCase.sourceScheme,
+              testCase.targetScheme
+            );
+
+            const endTime = process.hrtime.bigint();
+            const duration = Number(endTime - startTime) / 1000000; // Convert to milliseconds
+
+            results.conversions.push({
+              input: testCase.name,
+              output: result,
+              sourceScheme: testCase.sourceScheme,
+              targetScheme: testCase.targetScheme,
+              duration: duration
+            });
+          } catch (error) {
+            results.errors.push({
+              input: testCase.name,
+              sourceScheme: testCase.sourceScheme,
+              targetScheme: testCase.targetScheme,
+              error: error.message
+            });
+          }
+        }
+
+        results.endTime = Date.now();
+        results.totalDuration = results.endTime - results.startTime;
+        results.averageConversionTime = results.conversions.length > 0
+          ? results.conversions.reduce((sum, c) => sum + c.duration, 0) / results.conversions.length
+          : 0;
+        results.conversionsPerSecond = (results.conversions.length / results.totalDuration) * 1000;
+        results.errorRate = (results.errors.length / testData.length) * 100;
+
+        console.log(\`Performance Results:\`);
+        console.log(\`  Total Duration: \${results.totalDuration}ms\`);
+        console.log(\`  Average Conversion Time: \${results.averageConversionTime.toFixed(2)}ms\`);
+        console.log(\`  Conversions per Second: \${results.conversionsPerSecond.toFixed(2)}\`);
+        console.log(\`  Error Rate: \${results.errorRate.toFixed(2)}%\`);
+        console.log(\`  Successful Conversions: \${results.conversions.length}\`);
+        console.log(\`  Failed Conversions: \${results.errors.length}\`);
+
+        // Save detailed results
+        fs.writeFileSync('performance-results.json', JSON.stringify(results, null, 2));
+
+        // Performance thresholds
+        const MAX_AVG_CONVERSION_TIME = 10; // 10ms
+        const MAX_ERROR_RATE = 5; // 5%
+        const MIN_CONVERSIONS_PER_SECOND = 100;
+
+        if (results.averageConversionTime > MAX_AVG_CONVERSION_TIME) {
+          console.error(\`PERFORMANCE ISSUE: Average conversion time (\${results.averageConversionTime.toFixed(2)}ms) exceeds threshold (\${MAX_AVG_CONVERSION_TIME}ms)\`);
+          process.exit(1);
+        }
+
+        if (results.errorRate > MAX_ERROR_RATE) {
+          console.error(\`PERFORMANCE ISSUE: Error rate (\${results.errorRate.toFixed(2)}%) exceeds threshold (\${MAX_ERROR_RATE}%)\`);
+          process.exit(1);
+        }
+
+        if (results.conversionsPerSecond < MIN_CONVERSIONS_PER_SECOND) {
+          console.error(\`PERFORMANCE ISSUE: Conversions per second (\${results.conversionsPerSecond.toFixed(2)}) below threshold (\${MIN_CONVERSIONS_PER_SECOND})\`);
+          process.exit(1);
+        }
+
+        console.log('All performance thresholds passed! ✓');
+        "
+
+    - name: Upload performance results
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-results-${{ matrix.scheme }}-${{ matrix.batch_size }}
+        path: performance-results.json
+        retention-days: 30
+
+  memory-performance:
+    name: Memory Usage Analysis
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'memory' || github.event.inputs.test_type == null
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run memory analysis
+      run: |
+        node --expose-gc -e "
+        const { AnimationNameMapper } = require('./src/animation/AnimationNameMapper.js');
+
+        function getMemoryUsage() {
+          global.gc();
+          const used = process.memoryUsage();
+          return {
+            rss: Math.round(used.rss / 1024 / 1024 * 100) / 100,
+            heapTotal: Math.round(used.heapTotal / 1024 / 1024 * 100) / 100,
+            heapUsed: Math.round(used.heapUsed / 1024 / 1024 * 100) / 100,
+            external: Math.round(used.external / 1024 / 1024 * 100) / 100
+          };
+        }
+
+        console.log('Starting memory analysis...');
+
+        const initialMemory = getMemoryUsage();
+        console.log('Initial memory usage:', initialMemory);
+
+        // Create multiple mappers to test memory leaks
+        const mappers = [];
+        for (let i = 0; i < 100; i++) {
+          mappers.push(new AnimationNameMapper());
+        }
+
+        const afterCreationMemory = getMemoryUsage();
+        console.log('After creating 100 mappers:', afterCreationMemory);
+
+        // Perform conversions
+        const testAnimations = [
+          'char_walk_01', 'char_run_02', 'prop_door_open',
+          'character.idle.basic', 'character/movement/walk/forward',
+          'idle_basic', 'walk_forward', 'attack_sword'
+        ];
+
+        for (let round = 0; round < 10; round++) {
+          for (const mapper of mappers) {
+            for (const animation of testAnimations) {
+              try {
+                mapper.convert(animation, 'artist', 'semantic');
+                mapper.convert(animation, 'semantic', 'hierarchical');
+                mapper.convert(animation, 'hierarchical', 'legacy');
+              } catch (error) {
+                // Ignore conversion errors for memory test
+              }
+            }
+          }
+
+          if (round % 3 === 0) {
+            const memoryUsage = getMemoryUsage();
+            console.log(\`Round \${round + 1} memory usage:\`, memoryUsage);
+          }
+        }
+
+        const finalMemory = getMemoryUsage();
+        console.log('Final memory usage:', finalMemory);
+
+        // Calculate memory growth
+        const heapGrowth = finalMemory.heapUsed - initialMemory.heapUsed;
+        const rssGrowth = finalMemory.rss - initialMemory.rss;
+
+        console.log(\`Heap growth: \${heapGrowth} MB\`);
+        console.log(\`RSS growth: \${rssGrowth} MB\`);
+
+        // Memory leak thresholds
+        const MAX_HEAP_GROWTH = 50; // 50 MB
+        const MAX_RSS_GROWTH = 100; // 100 MB
+
+        if (heapGrowth > MAX_HEAP_GROWTH) {
+          console.error(\`MEMORY LEAK: Heap growth (\${heapGrowth} MB) exceeds threshold (\${MAX_HEAP_GROWTH} MB)\`);
+          process.exit(1);
+        }
+
+        if (rssGrowth > MAX_RSS_GROWTH) {
+          console.error(\`MEMORY LEAK: RSS growth (\${rssGrowth} MB) exceeds threshold (\${MAX_RSS_GROWTH} MB)\`);
+          process.exit(1);
+        }
+
+        console.log('Memory usage within acceptable limits ✓');
+        "
+
+  lighthouse-performance:
+    name: Demo Performance Audit
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'lighthouse' || github.event.inputs.test_type == null
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build demo
+      run: npm run build:demo
+
+    - name: Install Lighthouse
+      run: npm install -g @lhci/cli lighthouse
+
+    - name: Start demo server
+      run: |
+        npm run preview:demo &
+        sleep 10
+      env:
+        NODE_ENV: production
+
+    - name: Run Lighthouse audit
+      run: |
+        lighthouse http://localhost:3000 \
+          --output=json \
+          --output-path=lighthouse-report.json \
+          --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+          --only-categories=performance,accessibility,best-practices
+
+    - name: Analyze Lighthouse results
+      run: |
+        node -e "
+        const fs = require('fs');
+        const report = JSON.parse(fs.readFileSync('lighthouse-report.json', 'utf8'));
+
+        const scores = {
+          performance: report.categories.performance.score * 100,
+          accessibility: report.categories.accessibility.score * 100,
+          bestPractices: report.categories['best-practices'].score * 100
+        };
+
+        const metrics = {
+          fcp: report.audits['first-contentful-paint'].numericValue,
+          lcp: report.audits['largest-contentful-paint'].numericValue,
+          cls: report.audits['cumulative-layout-shift'].numericValue,
+          tbt: report.audits['total-blocking-time'].numericValue,
+          tti: report.audits['interactive'].numericValue
+        };
+
+        console.log('Lighthouse Scores:');
+        console.log(\`  Performance: \${scores.performance.toFixed(1)}/100\`);
+        console.log(\`  Accessibility: \${scores.accessibility.toFixed(1)}/100\`);
+        console.log(\`  Best Practices: \${scores.bestPractices.toFixed(1)}/100\`);
+
+        console.log('\\nCore Web Vitals:');
+        console.log(\`  First Contentful Paint: \${(metrics.fcp / 1000).toFixed(2)}s\`);
+        console.log(\`  Largest Contentful Paint: \${(metrics.lcp / 1000).toFixed(2)}s\`);
+        console.log(\`  Cumulative Layout Shift: \${metrics.cls.toFixed(3)}\`);
+        console.log(\`  Total Blocking Time: \${metrics.tbt.toFixed(0)}ms\`);
+        console.log(\`  Time to Interactive: \${(metrics.tti / 1000).toFixed(2)}s\`);
+
+        // Performance thresholds
+        const thresholds = {
+          performance: 90,
+          accessibility: 95,
+          bestPractices: 90,
+          fcp: 2000, // 2 seconds
+          lcp: 2500, // 2.5 seconds
+          cls: 0.1,
+          tbt: 300, // 300ms
+          tti: 3800 // 3.8 seconds
+        };
+
+        let failed = false;
+
+        if (scores.performance < thresholds.performance) {
+          console.error(\`PERFORMANCE ISSUE: Performance score (\${scores.performance.toFixed(1)}) below threshold (\${thresholds.performance})\`);
+          failed = true;
+        }
+
+        if (scores.accessibility < thresholds.accessibility) {
+          console.error(\`ACCESSIBILITY ISSUE: Accessibility score (\${scores.accessibility.toFixed(1)}) below threshold (\${thresholds.accessibility})\`);
+          failed = true;
+        }
+
+        if (metrics.fcp > thresholds.fcp) {
+          console.error(\`PERFORMANCE ISSUE: FCP (\${(metrics.fcp / 1000).toFixed(2)}s) exceeds threshold (\${thresholds.fcp / 1000}s)\`);
+          failed = true;
+        }
+
+        if (metrics.lcp > thresholds.lcp) {
+          console.error(\`PERFORMANCE ISSUE: LCP (\${(metrics.lcp / 1000).toFixed(2)}s) exceeds threshold (\${thresholds.lcp / 1000}s)\`);
+          failed = true;
+        }
+
+        if (metrics.cls > thresholds.cls) {
+          console.error(\`PERFORMANCE ISSUE: CLS (\${metrics.cls.toFixed(3)}) exceeds threshold (\${thresholds.cls})\`);
+          failed = true;
+        }
+
+        if (failed) {
+          process.exit(1);
+        }
+
+        console.log('\\nAll performance thresholds passed! ✓');
+        "
+
+    - name: Upload Lighthouse report
+      uses: actions/upload-artifact@v4
+      with:
+        name: lighthouse-report
+        path: lighthouse-report.json
+        retention-days: 30
+
+  generate-performance-report:
+    name: Generate Performance Report
+    runs-on: ubuntu-latest
+    needs: [conversion-performance, memory-performance, lighthouse-performance]
+    if: always()
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts/
+
+    - name: Generate performance report
+      run: |
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+
+        const report = {
+          timestamp: new Date().toISOString(),
+          commit: process.env.GITHUB_SHA || 'unknown',
+          branch: process.env.GITHUB_REF_NAME || 'unknown',
+          results: {
+            conversion: [],
+            memory: null,
+            lighthouse: null
+          },
+          summary: {
+            passed: 0,
+            failed: 0,
+            warnings: []
+          }
+        };
+
+        // Process conversion performance results
+        const artifactsDir = 'artifacts';
+        if (fs.existsSync(artifactsDir)) {
+          const artifactDirs = fs.readdirSync(artifactsDir);
+
+          for (const dir of artifactDirs) {
+            if (dir.startsWith('performance-results-')) {
+              const resultFile = path.join(artifactsDir, dir, 'performance-results.json');
+              if (fs.existsSync(resultFile)) {
+                const result = JSON.parse(fs.readFileSync(resultFile, 'utf8'));
+                report.results.conversion.push(result);
+
+                if (result.errorRate <= 5 && result.averageConversionTime <= 10) {
+                  report.summary.passed++;
+                } else {
+                  report.summary.failed++;
+                }
+              }
+            }
+
+            if (dir === 'lighthouse-report') {
+              const lightouseFile = path.join(artifactsDir, dir, 'lighthouse-report.json');
+              if (fs.existsSync(lightouseFile)) {
+                const lighthouse = JSON.parse(fs.readFileSync(lightouseFile, 'utf8'));
+                report.results.lighthouse = {
+                  performance: lighthouse.categories.performance.score * 100,
+                  accessibility: lighthouse.categories.accessibility.score * 100,
+                  bestPractices: lighthouse.categories['best-practices'].score * 100,
+                  fcp: lighthouse.audits['first-contentful-paint'].numericValue,
+                  lcp: lighthouse.audits['largest-contentful-paint'].numericValue,
+                  cls: lighthouse.audits['cumulative-layout-shift'].numericValue
+                };
+
+                if (report.results.lighthouse.performance >= 90) {
+                  report.summary.passed++;
+                } else {
+                  report.summary.failed++;
+                }
+              }
+            }
+          }
+        }
+
+        // Generate markdown report
+        let markdown = \`# Performance Test Report\\n\\n\`;
+        markdown += \`**Date:** \${new Date(report.timestamp).toLocaleString()}\\n\`;
+        markdown += \`**Commit:** \${report.commit}\\n\`;
+        markdown += \`**Branch:** \${report.branch}\\n\\n\`;
+
+        markdown += \`## Summary\\n\\n\`;
+        markdown += \`- ✅ **Passed:** \${report.summary.passed}\\n\`;
+        markdown += \`- ❌ **Failed:** \${report.summary.failed}\\n\\n\`;
+
+        if (report.results.conversion.length > 0) {
+          markdown += \`## Conversion Performance\\n\\n\`;
+          markdown += \`| Scheme | Batch Size | Avg Time (ms) | Conversions/sec | Error Rate (%) |\\n\`;
+          markdown += \`|--------|------------|---------------|-----------------|----------------|\\n\`;
+
+          for (const result of report.results.conversion) {
+            const status = result.errorRate <= 5 && result.averageConversionTime <= 10 ? '✅' : '❌';
+            markdown += \`| \${status} \${result.scheme} | \${result.batchSize} | \${result.averageConversionTime.toFixed(2)} | \${result.conversionsPerSecond.toFixed(2)} | \${result.errorRate.toFixed(2)} |\\n\`;
+          }
+          markdown += \`\\n\`;
+        }
+
+        if (report.results.lighthouse) {
+          markdown += \`## Lighthouse Performance\\n\\n\`;
+          const l = report.results.lighthouse;
+          markdown += \`- **Performance Score:** \${l.performance.toFixed(1)}/100\\n\`;
+          markdown += \`- **Accessibility Score:** \${l.accessibility.toFixed(1)}/100\\n\`;
+          markdown += \`- **Best Practices Score:** \${l.bestPractices.toFixed(1)}/100\\n\`;
+          markdown += \`- **First Contentful Paint:** \${(l.fcp / 1000).toFixed(2)}s\\n\`;
+          markdown += \`- **Largest Contentful Paint:** \${(l.lcp / 1000).toFixed(2)}s\\n\`;
+          markdown += \`- **Cumulative Layout Shift:** \${l.cls.toFixed(3)}\\n\\n\`;
+        }
+
+        fs.writeFileSync('performance-report.json', JSON.stringify(report, null, 2));
+        fs.writeFileSync('performance-report.md', markdown);
+
+        console.log('Performance report generated');
+        console.log(markdown);
+        "
+
+    - name: Upload performance report
+      uses: actions/upload-artifact@v4
+      with:
+        name: performance-report
+        path: |
+          performance-report.json
+          performance-report.md
+        retention-days: 90
+
+    - name: Comment performance report on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          if (fs.existsSync('performance-report.md')) {
+            const report = fs.readFileSync('performance-report.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+          }

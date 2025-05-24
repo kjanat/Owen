@@ -15,10 +15,13 @@ The Owen Animation System is a sophisticated character animation framework built
 -   **🤖 State Machine Implementation** - Complete state management system with `Wait`, `React`, `Type`, and `Sleep` states
 -   **😊 Emotional Response System** - Analyzes user input to determine appropriate emotional animations
 -   **🔄 Animation Transition Management** - Smooth transitions between states with fade in/out support
--   **📝 Animation Naming Convention Parser** - Automatically parses animation metadata from naming conventions
+-   **📝 Multi-Scheme Animation Naming** - Supports legacy, artist-friendly, hierarchical, and semantic naming schemes
+-   **🎨 Artist-Friendly Workflow** - Blender-compatible naming for 3D artists (`Owen_WaitIdle`, `Owen_ReactHappy`)
+-   **👨‍💻 Developer Experience** - Type-safe constants and semantic naming (`OwenWaitIdleLoop`, `OwenReactAngryTransition`)
 -   **🏗️ Clean Architecture** - Uses dependency injection, factory patterns, and separation of concerns
 -   **⚡ Performance Optimized** - Efficient animation caching and resource management
 -   **🧩 Extensible Design** - Easy to add new states, emotions, and animation types
+-   **🔄 Backward Compatibility** - Legacy naming scheme continues to work alongside new schemes
 
 ## 🚀 Installation
 
@@ -106,7 +109,54 @@ const owenSystem = await OwenSystemFactory.createCustomOwenSystem(gltfModel, sce
 await owenSystem.transitionTo(States.REACTING, Emotions.HAPPY);
 ```
 
-## 🎮 Animation Naming Convention
+## 🎨 Multi-Scheme Animation Naming
+
+Owen supports **four different animation naming schemes** to accommodate different workflows and preferences:
+
+### Naming Schemes
+
+| Scheme           | Format                       | Example                     | Use Case                        |
+| ---------------- | ---------------------------- | --------------------------- | ------------------------------- |
+| **Legacy**       | `{state}_{emotion}_{type}`   | `wait_idle_L`               | Backward compatibility          |
+| **Artist**       | `Owen_{Action}`              | `Owen_WaitIdle`             | Blender-friendly for 3D artists |
+| **Hierarchical** | `owen.{category}.{state}...` | `owen.state.wait.idle.loop` | Structured projects             |
+| **Semantic**     | `Owen{StateAction}{Type}`    | `OwenWaitIdleLoop`          | Developer-friendly              |
+
+### Usage Examples
+
+```javascript
+// All of these refer to the same animation:
+const clip1 = owenSystem.getClip('wait_idle_L');                    // Legacy
+const clip2 = owenSystem.getClip('Owen_WaitIdle');                  // Artist  
+const clip3 = owenSystem.getClip('owen.state.wait.idle.loop');      // Hierarchical
+const clip4 = owenSystem.getClip('OwenWaitIdleLoop');               // Semantic
+
+// Convert between schemes
+import { convertAnimationName, SemanticAnimations } from 'owen';
+
+const artistName = convertAnimationName('wait_idle_L', 'artist');
+// Returns: 'Owen_WaitIdle'
+
+// Use type-safe constants
+const animation = SemanticAnimations.WAIT_IDLE_LOOP; // 'OwenWaitIdleLoop'
+```
+
+### For 3D Artists (Blender Workflow)
+
+```javascript
+// Use artist-friendly names in Blender:
+// Owen_WaitIdle, Owen_ReactHappy, Owen_TypeFast, etc.
+// System automatically handles conversion!
+
+const clip = owenSystem.getClip('Owen_ReactAngry');  // Just works!
+```
+
+> [!TIP]
+> See the [Multi-Scheme Guide](./MULTI_SCHEME_GUIDE.md) for complete documentation and examples.
+
+## 🎮 Animation Naming Convention (Legacy)
+
+The system maintains backward compatibility with the original naming convention:
 
 The system expects animations to follow this naming convention:
 

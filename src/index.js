@@ -14,6 +14,20 @@ export { OwenAnimationContext } from './core/OwenAnimationContext.js'
 // Animation system exports
 export { AnimationClip, AnimationClipFactory } from './animation/AnimationClip.js'
 
+// Multi-scheme animation naming exports
+export { AnimationNameMapper } from './animation/AnimationNameMapper.js'
+export {
+  LegacyAnimations,
+  ArtistAnimations,
+  HierarchicalAnimations,
+  SemanticAnimations,
+  NamingSchemes,
+  convertAnimationName,
+  getAllAnimationNames,
+  validateAnimationName,
+  getAnimationsByStateAndEmotion
+} from './animation/AnimationConstants.js'
+
 // Loader exports
 export { AnimationLoader, GLTFAnimationLoader } from './loaders/AnimationLoader.js'
 

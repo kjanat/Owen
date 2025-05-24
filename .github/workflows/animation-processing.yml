@@ -1,0 +1,169 @@
+name: Animation Processing Pipeline
+
+on:
+  push:
+    paths:
+      - 'assets/animations/**'
+      - 'src/animation/AnimationNameMapper.js'
+      - 'src/animation/AnimationConstants.js'
+  pull_request:
+    paths:
+      - 'assets/animations/**'
+      - 'src/animation/AnimationNameMapper.js'
+      - 'src/animation/AnimationConstants.js'
+  workflow_dispatch:
+    inputs:
+      animation_scheme:
+        description: 'Primary naming scheme to use'
+        required: true
+        default: 'semantic'
+        type: choice
+        options:
+          - legacy
+          - artist
+          - hierarchical
+          - semantic
+
+jobs:
+  validate-animations:
+    name: Validate Animation Names
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Validate animation naming schemes
+      run: node scripts/validate-animations.js
+      env:
+        PRIMARY_SCHEME: ${{ github.event.inputs.animation_scheme || 'semantic' }}
+        
+    - name: Generate animation constants
+      run: node scripts/generate-animation-constants.js
+      
+    - name: Check for naming conflicts
+      run: node scripts/check-naming-conflicts.js
+      
+    - name: Upload validation report
+      uses: actions/upload-artifact@v4
+      with:
+        name: animation-validation-report
+        path: |
+          reports/animation-validation.json
+          reports/naming-conflicts.json
+
+  process-blender-assets:
+    name: Process Blender Animation Assets
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, '[process-blender]') || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Blender
+      uses: FlorianBreitwieser/setup-blender@v1
+      with:
+        blender-version: '3.6'
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Process Blender files
+      run: |
+        python scripts/blender-animation-processor.py \
+          --input-dir assets/blender \
+          --output-dir assets/animations \
+          --naming-scheme artist
+          
+    - name: Convert animation names
+      run: node scripts/convert-animation-names.js
+      
+    - name: Validate processed animations
+      run: node scripts/validate-processed-animations.js
+      
+    - name: Commit processed assets
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: 'Auto-process Blender animation assets [skip ci]'
+        file_pattern: 'assets/animations/* src/animation/AnimationConstants.js'
+
+  update-documentation:
+    name: Update Animation Documentation
+    runs-on: ubuntu-latest
+    needs: [validate-animations]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Generate animation documentation
+      run: node scripts/generate-animation-docs.js
+      
+    - name: Update API documentation
+      run: npm run docs
+      
+    - name: Generate multi-scheme examples
+      run: node scripts/generate-scheme-examples.js
+      
+    - name: Commit documentation updates
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: 'Auto-update animation documentation [skip ci]'
+        file_pattern: |
+          docs/**
+          MULTI_SCHEME_GUIDE.md
+          examples/*/README.md
+
+  deploy-demo:
+    name: Deploy Animation Demo
+    runs-on: ubuntu-latest
+    needs: [validate-animations, update-documentation]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build demo
+      run: npm run build:demo
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist-demo
+        cname: owen-animation-demo.your-domain.com

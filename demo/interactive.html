@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interactive Playground - Owen Animation System</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/interactive.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <div class="container">
+        <h1 class="logo">
+          <span class="logo-text">Owen</span>
+          <span class="logo-subtitle">Interactive Playground</span>
+        </h1>
+        <nav class="demo-nav">
+          <a href="index.html" class="nav-link">Demo</a>
+          <a href="examples.html" class="nav-link">Examples</a>
+          <a href="comparison.html" class="nav-link">Comparison</a>
+          <a href="interactive.html" class="nav-link active">Interactive</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="interactive-main">
+      <div class="container">
+        <section class="playground-hero">
+          <h2>Interactive Animation Playground</h2>
+          <p>
+            Experiment with the Owen Animation System in real-time. Try
+            different schemes, test conversions, and see the results instantly.
+          </p>
+        </section>
+
+        <div class="playground-layout">
+          <!-- Sidebar Controls -->
+          <aside class="playground-sidebar">
+            <div class="control-section">
+              <h3>Character Model</h3>
+              <select id="model-select">
+                <option value="basic-character">Basic Character</option>
+                <option value="detailed-character">Detailed Character</option>
+                <option value="robot-character">Robot Character</option>
+              </select>
+              <button id="load-model" class="btn btn-small">Load Model</button>
+            </div>
+
+            <div class="control-section">
+              <h3>Naming Scheme</h3>
+              <div class="scheme-selector">
+                <label class="scheme-option">
+                  <input type="radio" name="scheme" value="legacy" />
+                  <span>Legacy (snake_case)</span>
+                </label>
+                <label class="scheme-option">
+                  <input type="radio" name="scheme" value="artist" />
+                  <span>Artist (PascalCase)</span>
+                </label>
+                <label class="scheme-option">
+                  <input type="radio" name="scheme" value="hierarchical" />
+                  <span>Hierarchical (dot.notation)</span>
+                </label>
+                <label class="scheme-option">
+                  <input type="radio" name="scheme" value="semantic" checked />
+                  <span>Semantic (descriptive_names)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="control-section">
+              <h3>Available Animations</h3>
+              <div id="animation-list" class="animation-list">
+                <!-- Populated by JavaScript -->
+              </div>
+            </div>
+
+            <div class="control-section">
+              <h3>Playback Controls</h3>
+              <div class="playback-controls">
+                <button id="play-btn" class="btn btn-primary">Play</button>
+                <button id="pause-btn" class="btn">Pause</button>
+                <button id="stop-btn" class="btn">Stop</button>
+              </div>
+
+              <div class="playback-options">
+                <label>
+                  <input type="checkbox" id="loop-animation" checked />
+                  Loop Animation
+                </label>
+                <label>
+                  <input
+                    type="range"
+                    id="animation-speed"
+                    min="0.1"
+                    max="3"
+                    step="0.1"
+                    value="1"
+                  />
+                  Speed: <span id="speed-value">1.0x</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="control-section">
+              <h3>Conversion Tool</h3>
+              <div class="conversion-tool">
+                <input
+                  type="text"
+                  id="conversion-input"
+                  placeholder="Enter animation name..."
+                />
+                <select id="source-scheme">
+                  <option value="legacy">From Legacy</option>
+                  <option value="artist">From Artist</option>
+                  <option value="hierarchical">From Hierarchical</option>
+                  <option value="semantic">From Semantic</option>
+                </select>
+                <button id="convert-btn" class="btn btn-small">Convert</button>
+              </div>
+              <div id="conversion-results" class="conversion-results">
+                <!-- Results will be displayed here -->
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Viewport -->
+          <div class="playground-viewport">
+            <div class="viewport-header">
+              <h3>Animation Viewport</h3>
+              <div class="viewport-controls">
+                <button id="fullscreen-btn" class="btn btn-small">
+                  Fullscreen
+                </button>
+                <button id="reset-camera" class="btn btn-small">
+                  Reset Camera
+                </button>
+              </div>
+            </div>
+
+            <div class="viewport-container">
+              <canvas id="animation-canvas"></canvas>
+              <div class="viewport-overlay">
+                <div id="loading-indicator" class="loading-indicator">
+                  <div class="spinner"></div>
+                  <p>Loading model...</p>
+                </div>
+
+                <div id="animation-info" class="animation-info">
+                  <div class="info-item">
+                    <span class="label">Current Animation:</span>
+                    <span id="current-animation">None</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Duration:</span>
+                    <span id="animation-duration">0s</span>
+                  </div>
+                  <div class="info-item">
+                    <span class="label">Progress:</span>
+                    <div class="progress-bar">
+                      <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="progress-time">0.0s</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code Generator -->
+        <section class="code-generator">
+          <h3>Generated Code</h3>
+          <p>
+            See the actual code that would be used to implement your current
+            configuration:
+          </p>
+
+          <div class="code-tabs">
+            <button class="code-tab active" data-tab="javascript">
+              JavaScript
+            </button>
+            <button class="code-tab" data-tab="react">React</button>
+            <button class="code-tab" data-tab="vue">Vue</button>
+          </div>
+
+          <div class="code-content">
+            <div id="javascript-code" class="code-panel active">
+              <pre><code id="js-code-output">// Configure your naming scheme and load animations
+// Code will be generated based on your selections above</code></pre>
+              <button class="copy-code-btn" data-target="js-code-output">
+                Copy Code
+              </button>
+            </div>
+
+            <div id="react-code" class="code-panel">
+              <pre><code id="react-code-output">// React component implementation
+// Code will be generated based on your selections above</code></pre>
+              <button class="copy-code-btn" data-target="react-code-output">
+                Copy Code
+              </button>
+            </div>
+
+            <div id="vue-code" class="code-panel">
+              <pre><code id="vue-code-output">// Vue component implementation
+// Code will be generated based on your selections above</code></pre>
+              <button class="copy-code-btn" data-target="vue-code-output">
+                Copy Code
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Performance Monitor -->
+        <section class="performance-monitor">
+          <h3>Performance Monitor</h3>
+          <div class="performance-grid">
+            <div class="performance-metric">
+              <h4>Frame Rate</h4>
+              <div class="metric-value" id="fps-counter">60 FPS</div>
+              <div class="metric-chart" id="fps-chart"></div>
+            </div>
+
+            <div class="performance-metric">
+              <h4>Memory Usage</h4>
+              <div class="metric-value" id="memory-usage">0 MB</div>
+              <div class="metric-chart" id="memory-chart"></div>
+            </div>
+
+            <div class="performance-metric">
+              <h4>Animation Cache</h4>
+              <div class="metric-value" id="cache-stats">0 / 0</div>
+              <div class="cache-info">
+                <span>Cached: <span id="cached-count">0</span></span>
+                <span>Total: <span id="total-count">0</span></span>
+              </div>
+            </div>
+
+            <div class="performance-metric">
+              <h4>Conversion Time</h4>
+              <div class="metric-value" id="conversion-time">0ms</div>
+              <div class="time-breakdown">
+                <span>Avg: <span id="avg-time">0ms</span></span>
+                <span>Max: <span id="max-time">0ms</span></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Experiments Section -->
+        <section class="experiments-section">
+          <h3>Experiments & Tests</h3>
+          <div class="experiments-grid">
+            <div class="experiment-card">
+              <h4>🚀 Stress Test</h4>
+              <p>Load multiple animations and test performance</p>
+              <button id="stress-test-btn" class="btn">Run Stress Test</button>
+              <div id="stress-test-results" class="test-results"></div>
+            </div>
+
+            <div class="experiment-card">
+              <h4>🔄 Conversion Benchmark</h4>
+              <p>Benchmark animation name conversion performance</p>
+              <button id="conversion-benchmark-btn" class="btn">
+                Run Benchmark
+              </button>
+              <div id="conversion-benchmark-results" class="test-results"></div>
+            </div>
+
+            <div class="experiment-card">
+              <h4>📊 Scheme Analysis</h4>
+              <p>Analyze and compare naming scheme efficiency</p>
+              <button id="scheme-analysis-btn" class="btn">
+                Analyze Schemes
+              </button>
+              <div id="scheme-analysis-results" class="test-results"></div>
+            </div>
+
+            <div class="experiment-card">
+              <h4>💾 Memory Profiling</h4>
+              <p>Profile memory usage with different configurations</p>
+              <button id="memory-profile-btn" class="btn">
+                Profile Memory
+              </button>
+              <div id="memory-profile-results" class="test-results"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="demo-footer">
+      <div class="container">
+        <p>
+          &copy; 2024 Owen Animation System. Experiment freely and discover the
+          possibilities.
+        </p>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="./js/interactive.js"></script>
+    <script type="module" src="./js/playground.js"></script>
+    <script type="module" src="./js/performance-monitor.js"></script>
+  </body>
+</html>

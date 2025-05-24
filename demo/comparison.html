@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scheme Comparison - Owen Animation System</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/comparison.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <div class="container">
+        <h1 class="logo">
+          <span class="logo-text">Owen</span>
+          <span class="logo-subtitle">Scheme Comparison</span>
+        </h1>
+        <nav class="demo-nav">
+          <a href="index.html" class="nav-link">Demo</a>
+          <a href="examples.html" class="nav-link">Examples</a>
+          <a href="comparison.html" class="nav-link active">Comparison</a>
+          <a href="interactive.html" class="nav-link">Interactive</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="comparison-main">
+      <div class="container">
+        <section class="comparison-hero">
+          <h2>Animation Naming Scheme Comparison</h2>
+          <p>
+            Compare the four supported naming schemes and understand when to use
+            each one.
+          </p>
+        </section>
+
+        <!-- Scheme Overview -->
+        <section class="schemes-overview">
+          <div class="scheme-cards">
+            <div class="scheme-card" data-scheme="legacy">
+              <h3>Legacy</h3>
+              <div class="scheme-pattern">snake_case</div>
+              <div class="scheme-description">
+                Traditional lowercase with underscores. Compatible with older
+                animation systems.
+              </div>
+              <div class="scheme-example">walk_forward</div>
+            </div>
+
+            <div class="scheme-card" data-scheme="artist">
+              <h3>Artist</h3>
+              <div class="scheme-pattern">PascalCase</div>
+              <div class="scheme-description">
+                Artist-friendly naming with clear capitalization. Intuitive for
+                content creators.
+              </div>
+              <div class="scheme-example">WalkForward</div>
+            </div>
+
+            <div class="scheme-card" data-scheme="hierarchical">
+              <h3>Hierarchical</h3>
+              <div class="scheme-pattern">dot.notation</div>
+              <div class="scheme-description">
+                Structured hierarchy with dots. Excellent for organizing complex
+                animation sets.
+              </div>
+              <div class="scheme-example">character.movement.walk.forward</div>
+            </div>
+
+            <div class="scheme-card" data-scheme="semantic">
+              <h3>Semantic</h3>
+              <div class="scheme-pattern">descriptive_names</div>
+              <div class="scheme-description">
+                Semantic meaning with underscores. Clear intent and
+                self-documenting.
+              </div>
+              <div class="scheme-example">character_walk_forward</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Interactive Comparison Table -->
+        <section class="comparison-table-section">
+          <h3>Animation Name Comparison</h3>
+          <div class="table-controls">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="movement">
+              Movement
+            </button>
+            <button class="filter-btn" data-category="combat">Combat</button>
+            <button class="filter-btn" data-category="idle">Idle</button>
+            <button class="filter-btn" data-category="interaction">
+              Interaction
+            </button>
+          </div>
+
+          <div class="comparison-table-container">
+            <table class="comparison-table" id="animation-comparison-table">
+              <thead>
+                <tr>
+                  <th>Animation Type</th>
+                  <th>Legacy</th>
+                  <th>Artist</th>
+                  <th>Hierarchical</th>
+                  <th>Semantic</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Table will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Detailed Comparison -->
+        <section class="detailed-comparison">
+          <h3>Detailed Analysis</h3>
+
+          <div class="comparison-aspects">
+            <div class="aspect-card">
+              <h4>🎯 Use Cases</h4>
+              <div class="aspect-content">
+                <div class="use-case">
+                  <strong>Legacy:</strong> Migrating from older systems,
+                  maintaining backward compatibility
+                </div>
+                <div class="use-case">
+                  <strong>Artist:</strong> Content creation workflows,
+                  artist-friendly tools
+                </div>
+                <div class="use-case">
+                  <strong>Hierarchical:</strong> Large animation libraries,
+                  complex character systems
+                </div>
+                <div class="use-case">
+                  <strong>Semantic:</strong> Modern development, clear
+                  documentation needs
+                </div>
+              </div>
+            </div>
+
+            <div class="aspect-card">
+              <h4>⚡ Performance</h4>
+              <div class="performance-metrics">
+                <div class="metric">
+                  <span class="metric-name">Lookup Speed:</span>
+                  <div class="metric-bars">
+                    <div class="metric-bar legacy" style="width: 95%">
+                      Legacy
+                    </div>
+                    <div class="metric-bar artist" style="width: 90%">
+                      Artist
+                    </div>
+                    <div class="metric-bar hierarchical" style="width: 85%">
+                      Hierarchical
+                    </div>
+                    <div class="metric-bar semantic" style="width: 92%">
+                      Semantic
+                    </div>
+                  </div>
+                </div>
+                <div class="metric">
+                  <span class="metric-name">Memory Usage:</span>
+                  <div class="metric-bars">
+                    <div class="metric-bar legacy" style="width: 88%">
+                      Legacy
+                    </div>
+                    <div class="metric-bar artist" style="width: 85%">
+                      Artist
+                    </div>
+                    <div class="metric-bar hierarchical" style="width: 75%">
+                      Hierarchical
+                    </div>
+                    <div class="metric-bar semantic" style="width: 82%">
+                      Semantic
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="aspect-card">
+              <h4>🛠️ Developer Experience</h4>
+              <div class="aspect-content">
+                <div class="dx-rating">
+                  <div class="dx-item">
+                    <span>Readability:</span>
+                    <div class="rating-stars">
+                      <div class="stars legacy">★★★☆☆</div>
+                      <div class="stars artist">★★★★☆</div>
+                      <div class="stars hierarchical">★★★★★</div>
+                      <div class="stars semantic">★★★★★</div>
+                    </div>
+                  </div>
+                  <div class="dx-item">
+                    <span>Autocomplete:</span>
+                    <div class="rating-stars">
+                      <div class="stars legacy">★★★☆☆</div>
+                      <div class="stars artist">★★★★☆</div>
+                      <div class="stars hierarchical">★★★★★</div>
+                      <div class="stars semantic">★★★★☆</div>
+                    </div>
+                  </div>
+                  <div class="dx-item">
+                    <span>Maintainability:</span>
+                    <div class="rating-stars">
+                      <div class="stars legacy">★★☆☆☆</div>
+                      <div class="stars artist">★★★☆☆</div>
+                      <div class="stars hierarchical">★★★★★</div>
+                      <div class="stars semantic">★★★★☆</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Migration Guide -->
+        <section class="migration-guide">
+          <h3>Migration Between Schemes</h3>
+          <div class="migration-matrix">
+            <div class="migration-card">
+              <h4>From Legacy</h4>
+              <ul>
+                <li>
+                  <strong>To Artist:</strong> Capitalize first letter and after
+                  underscores
+                </li>
+                <li>
+                  <strong>To Hierarchical:</strong> Replace underscores with
+                  dots, add category prefixes
+                </li>
+                <li>
+                  <strong>To Semantic:</strong> Add descriptive prefixes
+                  (character_, ui_, effect_)
+                </li>
+              </ul>
+            </div>
+
+            <div class="migration-card">
+              <h4>From Artist</h4>
+              <ul>
+                <li>
+                  <strong>To Legacy:</strong> Convert to lowercase, add
+                  underscores before capitals
+                </li>
+                <li>
+                  <strong>To Hierarchical:</strong> Split on capitals, join with
+                  dots, add categories
+                </li>
+                <li>
+                  <strong>To Semantic:</strong> Convert to lowercase with
+                  underscores, add prefixes
+                </li>
+              </ul>
+            </div>
+
+            <div class="migration-card">
+              <h4>Automated Tools</h4>
+              <ul>
+                <li>
+                  <strong>CLI Converter:</strong>
+                  <code>owen convert --from legacy --to semantic</code>
+                </li>
+                <li>
+                  <strong>Batch Processing:</strong>
+                  <code>owen batch-convert ./animations/</code>
+                </li>
+                <li>
+                  <strong>Validation:</strong>
+                  <code>owen validate --scheme semantic</code>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Best Practices -->
+        <section class="best-practices">
+          <h3>Best Practices & Recommendations</h3>
+          <div class="practices-grid">
+            <div class="practice-card">
+              <h4>🏢 Enterprise Projects</h4>
+              <p><strong>Recommended:</strong> Hierarchical or Semantic</p>
+              <ul>
+                <li>Clear organization structure</li>
+                <li>Easy to maintain and scale</li>
+                <li>Good IDE support</li>
+              </ul>
+            </div>
+
+            <div class="practice-card">
+              <h4>🎨 Artist Workflows</h4>
+              <p><strong>Recommended:</strong> Artist or Semantic</p>
+              <ul>
+                <li>Intuitive for content creators</li>
+                <li>Clear visual distinction</li>
+                <li>Good tool integration</li>
+              </ul>
+            </div>
+
+            <div class="practice-card">
+              <h4>🔄 Legacy Migration</h4>
+              <p><strong>Recommended:</strong> Gradual transition</p>
+              <ul>
+                <li>Start with Legacy scheme</li>
+                <li>Use auto-conversion features</li>
+                <li>Migrate incrementally</li>
+              </ul>
+            </div>
+
+            <div class="practice-card">
+              <h4>🚀 New Projects</h4>
+              <p><strong>Recommended:</strong> Semantic scheme</p>
+              <ul>
+                <li>Modern best practices</li>
+                <li>Self-documenting code</li>
+                <li>Future-proof design</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="demo-footer">
+      <div class="container">
+        <p>
+          &copy; 2024 Owen Animation System. Choose the scheme that fits your
+          workflow.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module" src="./js/comparison.js"></script>
+  </body>
+</html>

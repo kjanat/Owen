@@ -4,6 +4,7 @@
  */
 
 import { States, Emotions, Config } from '../constants.js'
+import { AnimationNameMapper } from '../animation/AnimationNameMapper.js'
 
 /**
  * Main controller for the Owen animation system
@@ -44,6 +45,12 @@ export class OwenAnimationContext {
     this.stateFactory = stateFactory
 
     /**
+     * Multi-scheme animation name mapper
+     * @type {AnimationNameMapper}
+     */
+    this.nameMapper = new AnimationNameMapper()
+
+    /**
      * Map of animation clips by name
      * @type {Map<string, AnimationClip>}
      */
@@ -59,7 +66,7 @@ export class OwenAnimationContext {
      * Current active state
      * @type {string}
      */
-      this.currentState = States.WAITING
+    this.currentState = States.WAITING
 
     /**
      * Current active state handler
@@ -105,7 +112,7 @@ export class OwenAnimationContext {
     this.initializeStates()
 
     // Start in wait state
-      await this.transitionTo(States.WAITING)
+    await this.transitionTo(States.WAITING)
 
     this.initialized = true
     console.log('Owen Animation System initialized')
@@ -167,8 +174,8 @@ export class OwenAnimationContext {
     this.onUserActivity()
 
     // If sleeping, wake up first
-      if (this.currentState === States.SLEEPING) {
-          await this.transitionTo(States.REACTING)
+    if (this.currentState === States.SLEEPING) {
+      await this.transitionTo(States.REACTING)
     }
 
     // Let current state handle the message
@@ -177,10 +184,10 @@ export class OwenAnimationContext {
     }
 
     // Transition to appropriate next state based on current state
-      if (this.currentState === States.WAITING) {
-          await this.transitionTo(States.REACTING);
-      } else if (this.currentState === States.REACTING) {
-          await this.transitionTo(States.TYPING)
+    if (this.currentState === States.WAITING) {
+      await this.transitionTo(States.REACTING)
+    } else if (this.currentState === States.REACTING) {
+      await this.transitionTo(States.TYPING)
     }
   }
 
@@ -192,8 +199,8 @@ export class OwenAnimationContext {
     this.resetActivityTimer()
 
     // Wake up if sleeping
-      if (this.currentState === States.SLEEPING) {
-          this.transitionTo(States.WAITING)
+    if (this.currentState === States.SLEEPING) {
+      this.transitionTo(States.WAITING)
     }
   }
 
@@ -213,7 +220,7 @@ export class OwenAnimationContext {
    */
   async handleInactivity () {
     console.log('Inactivity detected, transitioning to sleep')
-      await this.transitionTo(States.SLEEPING)
+    await this.transitionTo(States.SLEEPING)
   }
 
   /**
@@ -234,18 +241,38 @@ export class OwenAnimationContext {
 
     // Update inactivity timer
     this.inactivityTimer += deltaTime
-      if (this.inactivityTimer > this.inactivityTimeout && this.currentState !== States.SLEEPING) {
+    if (this.inactivityTimer > this.inactivityTimeout && this.currentState !== States.SLEEPING) {
       this.handleInactivity()
     }
   }
 
   /**
-   * Get an animation clip by name
-   * @param {string} name - The animation clip name
+   * Get an animation clip by name (supports all naming schemes)
+   * @param {string} name - The animation clip name in any supported scheme
    * @returns {AnimationClip|undefined} The animation clip or undefined if not found
    */
   getClip (name) {
-    return this.clips.get(name)
+    // First try direct lookup
+    let clip = this.clips.get(name)
+    if (clip) return clip
+
+    // Try to find clip using name mapper
+    try {
+      const allNames = this.nameMapper.getAllNames(name)
+
+      // Try each possible name variant
+      for (const variant of Object.values(allNames)) {
+        clip = this.clips.get(variant)
+        if (clip) return clip
+      }
+    } catch (error) {
+      // If name mapping fails, continue with pattern search
+      console.debug(`Name mapping failed for "${name}":`, error.message)
+    }
+
+    // Fall back to pattern matching for legacy compatibility
+    const exactMatches = this.getClipsByPattern(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`)
+    return exactMatches.length > 0 ? exactMatches[0] : undefined
   }
 
   /**
@@ -264,6 +291,80 @@ export class OwenAnimationContext {
     }
 
     return matches
+  }
+
+  /**
+   * Get an animation clip by name in a specific naming scheme
+   * @param {string} name - The animation name
+   * @param {string} [targetScheme] - Target scheme: 'legacy', 'artist', 'hierarchical', 'semantic'
+   * @returns {AnimationClip|undefined} The animation clip or undefined if not found
+   */
+  getClipByScheme (name, targetScheme) {
+    try {
+      if (targetScheme) {
+        const convertedName = this.nameMapper.convert(name, targetScheme)
+        return this.clips.get(convertedName)
+      } else {
+        return this.getClip(name)
+      }
+    } catch (error) {
+      console.debug(`Scheme conversion failed for "${name}" to "${targetScheme}":`, error.message)
+      return undefined
+    }
+  }
+
+  /**
+   * Get all naming scheme variants for an animation
+   * @param {string} name - The animation name in any scheme
+   * @returns {Object} Object with all scheme variants: {legacy, artist, hierarchical, semantic}
+   */
+  getAnimationNames (name) {
+    try {
+      return this.nameMapper.getAllNames(name)
+    } catch (error) {
+      console.warn(`Could not get animation name variants for "${name}":`, error.message)
+      return {
+        legacy: name,
+        artist: name,
+        hierarchical: name,
+        semantic: name
+      }
+    }
+  }
+
+  /**
+   * Validate an animation name and get suggestions if invalid
+   * @param {string} name - The animation name to validate
+   * @returns {Object} Validation result with isValid, scheme, error, and suggestions
+   */
+  validateAnimationName (name) {
+    try {
+      return this.nameMapper.validateAnimationName(name)
+    } catch (error) {
+      return {
+        isValid: false,
+        scheme: 'unknown',
+        error: error.message,
+        suggestions: []
+      }
+    }
+  }
+
+  /**
+   * Get available animations by state and emotion
+   * @param {string} state - The state name (wait, react, type, sleep)
+   * @param {string} [emotion] - The emotion name (angry, happy, sad, shocked, neutral)
+   * @param {string} [scheme='semantic'] - The naming scheme to return
+   * @returns {string[]} Array of animation names in the specified scheme
+   */
+  getAnimationsByStateAndEmotion (state, emotion = '', scheme = 'semantic') {
+    try {
+      const animations = this.nameMapper.getAnimationsByFilter({ state, emotion })
+      return animations.map(anim => anim[scheme] || anim.semantic)
+    } catch (error) {
+      console.warn(`Could not filter animations by state "${state}" and emotion "${emotion}":`, error.message)
+      return []
+    }
   }
 
   /**

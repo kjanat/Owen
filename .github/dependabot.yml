@@ -1,0 +1,85 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "kjanat"
+    assignees:
+      - "kjanat"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "javascript"
+    ignore:
+      # Ignore major version updates for critical dependencies
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "vite"
+        update-types: ["version-update:semver-major"]
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+        patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier*"
+          - "jest*"
+          - "playwright*"
+          - "vite*"
+      animation-dependencies:
+        patterns:
+          - "*three*"
+          - "*gltf*"
+          - "*animation*"
+      testing-dependencies:
+        patterns:
+          - "*test*"
+          - "*mock*"
+          - "*spec*"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    reviewers:
+      - "kjanat"
+    assignees:
+      - "kjanat"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "ci/cd"
+
+  # Enable version updates for Python (Blender scripts)
+  - package-ecosystem: "pip"
+    directory: "/scripts"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "09:00"
+    reviewers:
+      - "kjanat"
+    assignees:
+      - "kjanat"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+      - "blender"

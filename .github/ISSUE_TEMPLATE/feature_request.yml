@@ -1,0 +1,144 @@
+name: Feature Request
+description: Suggest an idea for the Owen Animation System
+title: "[Feature]: "
+labels: ["enhancement", "feature-request"]
+projects: ["kjanat/Owen"]
+assignees:
+  - kjanat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand your request.
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem Description
+      description: Is your feature request related to a problem? Please describe the problem or limitation you're experiencing.
+      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see implemented.
+      placeholder: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions or features you've considered.
+      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Feature Area
+      description: Which area of the system would this feature affect?
+      options:
+        - Animation Name Mapping
+        - Naming Schemes (Legacy/Artist/Hierarchical/Semantic)
+        - Core Animation System
+        - Blender Integration
+        - Documentation
+        - Demo Application
+        - Build System
+        - Testing Framework
+        - Performance
+        - Developer Experience
+        - API Design
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this feature to you?
+      options:
+        - Low - Nice to have
+        - Medium - Would improve workflow
+        - High - Blocking current work
+        - Critical - Major limitation
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Describe how you would use this feature and what benefits it would provide.
+      placeholder: |
+        Describe your specific use case:
+        - What are you trying to accomplish?
+        - How would this feature help?
+        - Who else might benefit from this feature?
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: Implementation Ideas
+      description: If you have ideas about how this could be implemented, please share them.
+      placeholder: |
+        Any thoughts on implementation approach:
+        - API design suggestions
+        - Integration points
+        - Configuration options
+        - Breaking changes considerations
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: Code Example
+      description: If applicable, provide a code example showing how you'd like to use this feature.
+      render: javascript
+      placeholder: |
+        ```javascript
+        // Example of how the feature might be used
+        const mapper = new AnimationNameMapper();
+
+        // Your proposed API usage
+        mapper.newFeature(options);
+        ```
+
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility Considerations
+      description: Please consider the impact of this feature
+      options:
+        - label: This feature should be backward compatible
+        - label: This feature may require breaking changes (acceptable)
+        - label: This feature should work with all naming schemes
+        - label: This feature affects the public API
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our Code of Conduct
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have searched existing issues and discussions for similar requests
+          required: true
+        - label: I have provided a clear description of the problem and proposed solution
+          required: true
+        - label: I have considered the impact on existing functionality
+          required: true

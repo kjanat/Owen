@@ -17,7 +17,7 @@ export class ReactStateHandler extends StateHandler {
      * @param {OwenAnimationContext} context - The animation context
      */
   constructor (context) {
-      super(States.REACTING, context)
+    super(States.REACTING, context)
 
     /**
          * Current emotional state
@@ -33,7 +33,7 @@ export class ReactStateHandler extends StateHandler {
      * @returns {Promise<void>}
      */
   async enter (_fromState = null, emotion = Emotions.NEUTRAL) {
-      console.log(`Entering REACTING state with emotion: ${emotion}`)
+    console.log(`Entering REACTING state with emotion: ${emotion}`)
     this.emotion = emotion
 
     // Play appropriate reaction
@@ -51,7 +51,7 @@ export class ReactStateHandler extends StateHandler {
      * @returns {Promise<void>}
      */
   async exit (toState = null, emotion = Emotions.NEUTRAL) {
-      console.log(`Exiting REACTING state to ${toState} with emotion: ${emotion}`)
+    console.log(`Exiting REACTING state to ${toState} with emotion: ${emotion}`)
 
     if (this.currentClip) {
       await this.stopCurrentClip()
@@ -154,6 +154,6 @@ export class ReactStateHandler extends StateHandler {
      * @returns {string[]} Array of available state transitions
      */
   getAvailableTransitions () {
-      return [ States.TYPING, States.WAITING ]
+    return [States.TYPING, States.WAITING]
   }
 }
