@@ -192,7 +192,7 @@ jobs:
         path: dist/demo/
 
     - name: Deploy to staging
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist/demo
@@ -221,7 +221,7 @@ jobs:
         path: dist/demo/
 
     - name: Deploy to production
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist/demo
