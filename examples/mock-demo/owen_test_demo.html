@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owen Animation System Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            min-width: 300px;
+        }
+        
+        h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+            font-size: 14px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-width: 400px;
+        }
+        
+        .status-line {
+            margin-bottom: 5px;
+        }
+        
+        .status-line:last-child {
+            margin-bottom: 0;
+        }
+        
+        .emotion-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .emotion-neutral { background: linear-gradient(45deg, #4CAF50, #45a049); }
+        .emotion-angry { background: linear-gradient(45deg, #f44336, #d32f2f); }
+        .emotion-shocked { background: linear-gradient(45deg, #ff9800, #f57c00); }
+        .emotion-happy { background: linear-gradient(45deg, #ffeb3b, #fbc02d); color: #333; }
+        .emotion-sad { background: linear-gradient(45deg, #2196f3, #1976d2); }
+        
+        #owen-character {
+            position: absolute;
+            right: 50px;
+            bottom: 50px;
+            width: 300px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .owen-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .owen-state {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .owen-emotion {
+            font-size: 14px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .animation-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background: #f9f9f9;
+        }
+        
+        .animation-item {
+            padding: 5px;
+            margin: 2px 0;
+            border-radius: 3px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        .animation-playing {
+            background: #e8f5e8;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        
+        .typing-indicator {
+            display: none;
+            color: #667eea;
+            font-style: italic;
+        }
+        
+        .typing-indicator.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="controls">
+            <h2>🤖 Owen Animation Control Panel</h2>
+            
+            <div class="control-group">
+                <label>Send Message to Owen:</label>
+                <input type="text" id="messageInput" placeholder="Type a message..." />
+                <button onclick="sendMessage()">Send Message</button>
+                <div class="typing-indicator" id="typingIndicator">Owen is typing...</div>
+            </div>
+            
+            <div class="control-group">
+                <label>Manual State Transitions:</label>
+                <button onclick="transitionTo('wait')">Wait</button>
+                <button onclick="transitionTo('react')">React</button>
+                <button onclick="transitionTo('type')">Type</button>
+                <button onclick="transitionTo('sleep')">Sleep</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Test Emotions:</label>
+                <div class="emotion-buttons">
+                    <button class="emotion-neutral" onclick="testEmotion('neutral')">😊 Neutral</button>
+                    <button class="emotion-angry" onclick="testEmotion('angry')">😠 Angry</button>
+                    <button class="emotion-shocked" onclick="testEmotion('shocked')">😲 Shocked</button>
+                    <button class="emotion-happy" onclick="testEmotion('happy')">😄 Happy</button>
+                    <button class="emotion-sad" onclick="testEmotion('sad')">😢 Sad</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>Quick Test Messages:</label>
+                <button onclick="quickMessage('Hello Owen! How are you?')">Friendly</button>
+                <button onclick="quickMessage('URGENT: Fix this now!')">Urgent</button>
+                <button onclick="quickMessage('Great job on the project!')">Praise</button>
+                <button onclick="quickMessage('We have a problem...')">Problem</button>
+            </div>
+            
+            <div class="control-group">
+                <label>System Controls:</label>
+                <button onclick="simulateActivity()">Simulate Activity</button>
+                <button onclick="simulateInactivity()">Force Sleep</button>
+                <button onclick="resetSystem()">Reset</button>
+            </div>
+            
+            <div class="control-group">
+                <label>Active Animations:</label>
+                <div class="animation-list" id="animationList">
+                    <div class="animation-item">System initializing...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="status">
+            <div class="status-line"><strong>Owen System Status</strong></div>
+            <div class="status-line">State: <span id="currentState">Initializing</span></div>
+            <div class="status-line">Emotion: <span id="currentEmotion">Neutral</span></div>
+            <div class="status-line">Last Activity: <span id="lastActivity">Now</span></div>
+            <div class="status-line">Active Clips: <span id="activeClips">0</span></div>
+        </div>
+        
+        <div id="owen-character">
+            <div class="owen-avatar" id="owenAvatar">🤖</div>
+            <div class="owen-state" id="owenState">Initializing...</div>
+            <div class="owen-emotion" id="owenEmotion">Neutral</div>
+        </div>
+    </div>
+
+    <script>
+        // Import the Owen system (in a real scenario, this would be imported)
+        // For this demo, we'll include a simplified version inline
+        
+        // Mock Owen Animation System for Testing
+        class MockOwenSystem {
+            constructor() {
+                this.currentState = 'wait';
+                this.currentEmotion = 'neutral';
+                this.lastActivity = Date.now();
+                this.activeAnimations = new Set();
+                this.isTyping = false;
+                this.messageQueue = [];
+                
+                // Mock animation clips based on the naming convention
+                this.availableClips = [
+                    'wait_idle_L',
+                    'wait_pickNose_Q',
+                    'wait_wave_Q',
+                    'wait_2react_T',
+                    'wait_2sleep_T',
+                    'react_idle_L',
+                    'react_2type_T',
+                    'react_angry2type_an_T',
+                    'react_shock2type_sh_T',
+                    'type_idle_L',
+                    'type_angry_L',
+                    'type_shocked_L',
+                    'type_2wait_T',
+                    'type_angry2wait_T',
+                    'type_shocked2wait_T',
+                    'sleep_idle_L',
+                    'sleep_2wait_T'
+                ];
+                
+                this.stateColors = {
+                    wait: '#4CAF50',
+                    react: '#ff9800',
+                    type: '#2196f3',
+                    sleep: '#9c27b0'
+                };
+                
+                this.emotionEmojis = {
+                    neutral: '😊',
+                    angry: '😠',
+                    shocked: '😲',
+                    happy: '😄',
+                    sad: '😢'
+                };
+                
+                this.inactivityTimer = null;
+                this.quirkTimer = null;
+            }
+            
+            async initialize() {
+                console.log('Owen system initializing...');
+                await this.transitionTo('wait');
+                this.startQuirkTimer();
+                this.updateUI();
+                console.log('Owen system ready!');
+            }
+            
+            async transitionTo(newState, emotion = 'neutral') {
+                const fromState = this.currentState;
+                console.log(`Transitioning from ${fromState} to ${newState} with emotion: ${emotion}`);
+                
+                // Stop current animations
+                this.stopAllAnimations();
+                
+                // Play transition animation if available
+                const transitionClip = `${fromState}_2${newState}_T`;
+                if (this.availableClips.includes(transitionClip)) {
+                    await this.playAnimation(transitionClip, 500);
+                }
+                
+                // Update state
+                this.currentState = newState;
+                this.currentEmotion = emotion;
+                this.lastActivity = Date.now();
+                
+                // Play state animation
+                await this.enterState(newState, emotion);
+                
+                this.updateUI();
+                this.resetInactivityTimer();
+            }
+            
+            async enterState(state, emotion = 'neutral') {
+                let clipName = `${state}_idle_L`;
+                
+                // Handle emotional states
+                if (emotion !== 'neutral' && (state === 'type' || state === 'react')) {
+                    const emotionCode = this.getEmotionCode(emotion);
+                    const emotionalClip = `${state}_${emotionCode}_L`;
+                    if (this.availableClips.includes(emotionalClip)) {
+                        clipName = emotionalClip;
+                    }
+                }
+                
+                if (this.availableClips.includes(clipName)) {
+                    this.playAnimation(clipName);
+                }
+                
+                // Handle state-specific logic
+                switch (state) {
+                    case 'wait':
+                        this.startQuirkTimer();
+                        break;
+                    case 'type':
+                        this.isTyping = true;
+                        document.getElementById('typingIndicator').classList.add('active');
+                        break;
+                    case 'sleep':
+                        this.stopQuirkTimer();
+                        setTimeout(() => {
+                            if (this.currentState === 'sleep') {
+                                this.transitionTo('wait');
+                            }
+                        }, 10000); // Wake up after 10 seconds in demo
+                        break;
+                }
+            }
+            
+            async handleUserMessage(message) {
+                this.onUserActivity();
+                
+                // Analyze message for emotion
+                const emotion = this.analyzeMessageEmotion(message);
+                
+                // Transition to react state
+                if (this.currentState !== 'react') {
+                    await this.transitionTo('react', emotion);
+                }
+                
+                // Brief pause to show reaction
+                setTimeout(async () => {
+                    // Transition to type state
+                    await this.transitionTo('type', emotion);
+                    
+                    // Simulate typing duration
+                    const typingDuration = Math.min(message.length * 100, 3000);
+                    setTimeout(async () => {
+                        this.isTyping = false;
+                        document.getElementById('typingIndicator').classList.remove('active');
+                        await this.transitionTo('wait');
+                    }, typingDuration);
+                }, 1000);
+            }
+            
+            analyzeMessageEmotion(message) {
+                const text = message.toLowerCase();
+                
+                if (text.includes('!') || text.includes('urgent') || text.includes('asap') || text.includes('now')) {
+                    return 'shocked';
+                }
+                if (text.includes('error') || text.includes('problem') || text.includes('issue') || text.includes('wrong')) {
+                    return 'angry';
+                }
+                if (text.includes('great') || text.includes('awesome') || text.includes('good') || text.includes('excellent')) {
+                    return 'happy';
+                }
+                if (text.includes('sad') || text.includes('sorry') || text.includes('disappointed')) {
+                    return 'sad';
+                }
+                
+                return 'neutral';
+            }
+            
+            onUserActivity() {
+                this.lastActivity = Date.now();
+                this.resetInactivityTimer();
+                
+                // Wake up if sleeping
+                if (this.currentState === 'sleep') {
+                    this.transitionTo('wait');
+                }
+            }
+            
+            resetInactivityTimer() {
+                if (this.inactivityTimer) {
+                    clearTimeout(this.inactivityTimer);
+                }
+                
+                this.inactivityTimer = setTimeout(() => {
+                    if (this.currentState === 'wait') {
+                        this.transitionTo('sleep');
+                    }
+                }, 15000); // 15 seconds for demo
+            }
+            
+            startQuirkTimer() {
+                this.stopQuirkTimer();
+                this.quirkTimer = setInterval(() => {
+                    if (this.currentState === 'wait' && Math.random() < 0.3) {
+                        this.playRandomQuirk();
+                    }
+                }, 5000);
+            }
+            
+            stopQuirkTimer() {
+                if (this.quirkTimer) {
+                    clearInterval(this.quirkTimer);
+                    this.quirkTimer = null;
+                }
+            }
+            
+            playRandomQuirk() {
+                const quirks = this.availableClips.filter(clip => 
+                    clip.startsWith('wait_') && clip.endsWith('_Q')
+                );
+                
+                if (quirks.length > 0) {
+                    const randomQuirk = quirks[Math.floor(Math.random() * quirks.length)];
+                    this.playAnimation(randomQuirk, 2000);
+                }
+            }
+            
+            async playAnimation(clipName, duration = null) {
+                console.log(`Playing animation: ${clipName}`);
+                this.activeAnimations.add(clipName);
+                this.updateAnimationList();
+                
+                // Simulate animation duration
+                const animDuration = duration || (clipName.includes('_T') ? 500 : 2000);
+                
+                setTimeout(() => {
+                    this.activeAnimations.delete(clipName);
+                    this.updateAnimationList();
+                }, animDuration);
+            }
+            
+            stopAllAnimations() {
+                this.activeAnimations.clear();
+                this.updateAnimationList();
+            }
+            
+            getEmotionCode(emotion) {
+                const emotionCodes = {
+                    angry: 'an',
+                    shocked: 'sh',
+                    happy: 'ha',
+                    sad: 'sa'
+                };
+                return emotionCodes[emotion] || '';
+            }
+            
+            updateUI() {
+                // Update status panel
+                document.getElementById('currentState').textContent = this.currentState.toUpperCase();
+                document.getElementById('currentEmotion').textContent = this.currentEmotion;
+                document.getElementById('lastActivity').textContent = new Date(this.lastActivity).toLocaleTimeString();
+                document.getElementById('activeClips').textContent = this.activeAnimations.size;
+                
+                // Update Owen character
+                const avatar = document.getElementById('owenAvatar');
+                const stateEl = document.getElementById('owenState');
+                const emotionEl = document.getElementById('owenEmotion');
+                
+                avatar.style.background = `linear-gradient(45deg, ${this.stateColors[this.currentState]}, #764ba2)`;
+                avatar.textContent = this.emotionEmojis[this.currentEmotion];
+                stateEl.textContent = this.currentState.toUpperCase();
+                emotionEl.textContent = this.currentEmotion;
+                
+                // Add animation effect
+                avatar.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    avatar.style.transform = 'scale(1)';
+                }, 200);
+            }
+            
+            updateAnimationList() {
+                const listEl = document.getElementById('animationList');
+                listEl.innerHTML = '';
+                
+                if (this.activeAnimations.size === 0) {
+                    listEl.innerHTML = '<div class="animation-item">No active animations</div>';
+                } else {
+                    this.activeAnimations.forEach(clipName => {
+                        const item = document.createElement('div');
+                        item.className = 'animation-item animation-playing';
+                        item.textContent = clipName;
+                        listEl.appendChild(item);
+                    });
+                }
+            }
+        }
+        
+        // Global Owen system instance
+        let owenSystem;
+        
+        // Initialize the system
+        async function initializeOwen() {
+            owenSystem = new MockOwenSystem();
+            await owenSystem.initialize();
+            
+            // Add mouse activity listener
+            document.addEventListener('mousemove', () => {
+                owenSystem.onUserActivity();
+            });
+            
+            // Add keyboard activity listener
+            document.addEventListener('keydown', (e) => {
+                owenSystem.onUserActivity();
+                
+                // Send message on Enter
+                if (e.key === 'Enter' && document.activeElement.id === 'messageInput') {
+                    sendMessage();
+                }
+            });
+        }
+        
+        // UI Control Functions
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                owenSystem.handleUserMessage(message);
+                input.value = '';
+            }
+        }
+        
+        function transitionTo(state) {
+            owenSystem.transitionTo(state);
+        }
+        
+        function testEmotion(emotion) {
+            owenSystem.transitionTo(owenSystem.currentState, emotion);
+        }
+        
+        function quickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+        
+        function simulateActivity() {
+            owenSystem.onUserActivity();
+        }
+        
+        function simulateInactivity() {
+            owenSystem.transitionTo('sleep');
+        }
+        
+        function resetSystem() {
+            owenSystem.transitionTo('wait', 'neutral');
+        }
+        
+        // Start the demo when page loads
+        window.addEventListener('load', initializeOwen);
+        
+        // Update UI every second
+        setInterval(() => {
+            if (owenSystem) {
+                document.getElementById('lastActivity').textContent = 
+                    Math.floor((Date.now() - owenSystem.lastActivity) / 1000) + 's ago';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

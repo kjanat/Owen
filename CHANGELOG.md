@@ -17,20 +17,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   🎉 Initial release of Owen Animation System
--   ✨ Complete state machine implementation with Wait, React, Type, and Sleep states
--   🤖 Emotional response system for character animations
--   🏗️ Clean architecture with dependency injection and factory patterns
--   📝 Animation naming convention parser
--   🔄 Smooth animation transitions with fade in/out support
--   ⚡ Performance-optimized animation caching
--   🧩 Extensible design for custom states and emotions
--   📊 Comprehensive JSDoc documentation
--   🎮 Interactive demo with keyboard controls
--   📦 TypeScript type definitions
--   🛠️ Development tooling (ESLint, Vite, JSDoc)
+-   🎯 Complete modular architecture with proper ES module structure
+-   🧩 Extensible plugin system for custom states and emotions
+-   📊 Comprehensive JSDoc documentation across all modules
+-   🎮 Enhanced interactive demo with keyboard controls
+-   📦 TypeScript type definitions for all components
+-   🔧 Configuration system for fine-tuning behavior
+-   🏗️ Examples directory with various implementation patterns
+-   🚀 Vite-based development and build system
 
-[1.0.1]: https://gitea.kajkowalski.nl/kjanat/Owen/releases/tag/v1.0.1
+### Enhanced
+
+-   ⚡ Optimized animation caching with intelligent preloading
+-   🤖 Advanced emotional analysis with broader message understanding
+-   🔄 Sophisticated animation transitions with nested state support
+-   📝 Extended animation naming convention with nested animations
+-   🎨 Refined state machine behavior and transitions
+-   🛠️ Improved development tooling integration
 
 ### Architecture
 
@@ -90,4 +93,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Interactive controls for state transitions
 -   Mock model implementation for development
 
+## [0.1.0] - 2025-05-01
+
+### Added
+
+-   🎉 First implementation of Owen Animation System
+-   ✨ Basic state machine implementation (Wait, React, Type, Sleep)
+-   🤖 Simple emotional response system with basic message analysis
+-   🏗️ Initial architecture with basic dependency injection pattern
+-   📝 Basic animation naming parser for transitions and states
+-   🔄 Basic animation transitions between states
+-   ⚡ Simple animation clip caching
+-   🎮 Basic Three.js integration with GLTFLoader
+-   🎭 Core state handlers with basic functionality
+-   🛠️ Development environment foundations
+
+[1.0.1]: https://gitea.kajkowalski.nl/kjanat/Owen/releases/tag/v1.0.1
 [1.0.0]: https://gitea.kajkowalski.nl/kjanat/Owen/releases/tag/v1.0.0
+[0.1.0]: https://gitea.kajkowalski.nl/kjanat/Owen/releases/tag/v0.1.0

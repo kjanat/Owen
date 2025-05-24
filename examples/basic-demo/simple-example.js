@@ -3,7 +3,7 @@
  * @author Owen Animation System
  */
 
-import { OwenSystemFactory, States } from '../src/index.js'
+import { OwenSystemFactory, States } from '../../src/index.js'
 
 /**
  * Simple example of using Owen Animation System

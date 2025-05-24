@@ -6,7 +6,8 @@
   "types": "src/index.d.ts",
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
+    "dev:host": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "standard",

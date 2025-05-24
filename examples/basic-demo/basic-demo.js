@@ -5,7 +5,7 @@
 
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { OwenSystemFactory, States } from '../src/index.js'
+import { OwenSystemFactory, States } from '../../src/index.js'
 
 /**
  * Basic Owen Animation System demo
