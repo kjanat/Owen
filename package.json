@@ -39,7 +39,7 @@
     "author": "Kaj \"@kjanat\" Kowalski",
     "license": "AGPL-3.0-only OR LicenseRef-Commercial",
     "dependencies": {
-        "three": "^0.176.0"
+        "three": "^0.177.0"
     },
     "devDependencies": {
         "@playwright/test": "^1.52.0",
