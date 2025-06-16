@@ -42,7 +42,7 @@
         "three": "^0.177.0"
     },
     "devDependencies": {
-        "@playwright/test": "^1.52.0",
+        "@playwright/test": "^1.53.0",
         "jsdoc": "^4.0.2",
         "pre-commit": "^1.2.2",
         "standard": "*",
