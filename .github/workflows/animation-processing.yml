@@ -98,7 +98,7 @@ jobs:
       run: node scripts/validate-processed-animations.js
       
     - name: Commit processed assets
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v6
       with:
         commit_message: 'Auto-process Blender animation assets [skip ci]'
         file_pattern: 'assets/animations/* src/animation/AnimationConstants.js'
@@ -131,7 +131,7 @@ jobs:
       run: node scripts/generate-scheme-examples.js
       
     - name: Commit documentation updates
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v6
       with:
         commit_message: 'Auto-update animation documentation [skip ci]'
         file_pattern: |
